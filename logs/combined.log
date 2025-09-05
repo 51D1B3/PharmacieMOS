@@ -1,0 +1,32 @@
+{"level":"info","message":"✅ Socket.IO handlers configurés","service":"pharmacie-api","timestamp":"2025-08-24 12:05:11"}
+{"level":"info","message":"✅ MongoDB connecté: ac-727tjjg-shard-00-00.i2yw1cl.mongodb.net","service":"pharmacie-api","timestamp":"2025-08-24 12:05:14"}
+{"level":"info","message":"ℹ️ Redis désactivé (USE_REDIS!=true), Socket.IO utilise l'adapter mémoire","service":"pharmacie-api","timestamp":"2025-08-24 12:05:14"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 5002","service":"pharmacie-api","timestamp":"2025-08-24 12:05:14"}
+{"level":"info","message":"📱 Mode: development","service":"pharmacie-api","timestamp":"2025-08-24 12:05:14"}
+{"level":"info","message":"🔗 API: http://localhost:5002","service":"pharmacie-api","timestamp":"2025-08-24 12:05:14"}
+{"level":"info","message":"💬 Socket.IO: ws://localhost:5002","service":"pharmacie-api","timestamp":"2025-08-24 12:05:14"}
+{"level":"info","message":"✅ Socket.IO handlers configurés","service":"pharmacie-api","timestamp":"2025-08-24 12:55:06"}
+{"level":"info","message":"✅ MongoDB connecté: ac-727tjjg-shard-00-00.i2yw1cl.mongodb.net","service":"pharmacie-api","timestamp":"2025-08-24 12:55:15"}
+{"level":"info","message":"ℹ️ Redis désactivé (USE_REDIS!=true), Socket.IO utilise l'adapter mémoire","service":"pharmacie-api","timestamp":"2025-08-24 12:55:15"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 5002","service":"pharmacie-api","timestamp":"2025-08-24 12:55:15"}
+{"level":"info","message":"📱 Mode: development","service":"pharmacie-api","timestamp":"2025-08-24 12:55:15"}
+{"level":"info","message":"🔗 API: http://localhost:5002","service":"pharmacie-api","timestamp":"2025-08-24 12:55:15"}
+{"level":"info","message":"💬 Socket.IO: ws://localhost:5002","service":"pharmacie-api","timestamp":"2025-08-24 12:55:15"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 12:59:01"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 12:59:01"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:11:22"}
+{"level":"warn","message":"⚠️ MongoDB déconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:12:23"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:12:29"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:20:45"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:20:45"}
+{"level":"warn","message":"⚠️ MongoDB déconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:21:03"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:21:04"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:23:14"}
+{"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-08-24 13:23:14"}
+{"level":"info","message":"✅ Socket.IO handlers configurés","service":"pharmacie-api","timestamp":"2025-08-28 23:43:12"}
+{"level":"info","message":"✅ MongoDB connecté: ac-727tjjg-shard-00-00.i2yw1cl.mongodb.net","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
+{"level":"info","message":"ℹ️ Redis désactivé (USE_REDIS!=true), Socket.IO utilise l'adapter mémoire","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
+{"level":"info","message":"🚀 Serveur démarré sur le port 5000","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
+{"level":"info","message":"📱 Mode: development","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
+{"level":"info","message":"🔗 API: http://localhost:5000","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
+{"level":"info","message":"💬 Socket.IO: ws://localhost:5000","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
