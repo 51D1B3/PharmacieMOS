@@ -140,10 +140,10 @@ const ProductsGrid = () => {
   }
 
   return (
-    <div className="mt-8">
+  <div className="mt-8 bg-white dark:bg-gray-900 rounded-xl p-2">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Nos Produits</h2>
-        <p className="text-gray-600">{products.length} produits disponibles</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Nos Produits</h2>
+        <p className="text-gray-600 dark:text-gray-300">{products.length} produits disponibles</p>
       </div>
 
       {/* Barre de recherche */}
@@ -156,11 +156,11 @@ const ProductsGrid = () => {
               placeholder="Rechercher un produit..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
           {searchTerm && (
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 dark:text-gray-300">
               {products.length} résultat{products.length > 1 ? 's' : ''} pour "{searchTerm}"
             </div>
           )}
@@ -168,9 +168,9 @@ const ProductsGrid = () => {
       </div>
 
       {/* Filtres par catégories */}
-      <div className="mb-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+  <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
             <Filter className="h-5 w-5 mr-2 text-primary-600" />
             Filtrer par catégorie
           </h3>
@@ -185,18 +185,18 @@ const ProductsGrid = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Sélection de catégorie principale */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
               Catégorie principale
             </label>
             <div className="relative">
               <button
                 onClick={() => setShowCategoryFilter(!showCategoryFilter)}
-                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 text-left flex items-center justify-between hover:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-left flex items-center justify-between hover:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
-                <span className="text-gray-900">
+                <span className="text-gray-900 dark:text-gray-100">
                   {selectedCategory ? 
                     categories.find(cat => cat._id === selectedCategory)?.name : 
                     'Sélectionner une catégorie'
@@ -206,14 +206,14 @@ const ProductsGrid = () => {
               </button>
               
               {showCategoryFilter && (
-                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                   <button
                     onClick={() => {
                       setSelectedCategory('');
                       setSelectedSubCategory('');
                       setShowCategoryFilter(false);
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-50 text-gray-700"
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200"
                   >
                     Toutes les catégories
                   </button>
@@ -225,8 +225,8 @@ const ProductsGrid = () => {
                         setSelectedSubCategory('');
                         setShowCategoryFilter(false);
                       }}
-                      className={`w-full px-4 py-2 text-left hover:bg-gray-50 ${
-                        selectedCategory === category._id ? 'bg-primary-50 text-primary-700' : 'text-gray-700'
+                      className={`w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 ${
+                        selectedCategory === category._id ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-200'
                       }`}
                     >
                       {category.name}
@@ -245,13 +245,13 @@ const ProductsGrid = () => {
           {/* Sélection de sous-catégorie */}
           {selectedCategory && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                 Sous-catégorie
               </label>
               <select
                 value={selectedSubCategory}
                 onChange={(e) => setSelectedSubCategory(e.target.value)}
-                className="w-full bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-gray-100"
               >
                 <option value="">Toutes les sous-catégories</option>
                 {categories
@@ -268,8 +268,8 @@ const ProductsGrid = () => {
 
         {/* Affichage du filtre actuel */}
         {(selectedCategory || selectedSubCategory) && (
-          <div className="mt-4 p-3 bg-primary-50 rounded-lg">
-            <p className="text-sm text-primary-700">
+          <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
+            <p className="text-sm text-primary-700 dark:text-primary-300">
               <strong>Filtre actuel:</strong> {getSelectedCategoryName()}
             </p>
           </div>
@@ -286,9 +286,9 @@ const ProductsGrid = () => {
           const hasDiscount = product.hasActiveDiscount && finalPrice < originalPrice;
 
           return (
-            <div key={product._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 group">
+            <div key={product._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-all duration-300 group">
               {/* Image du produit */}
-              <div className="relative h-48 bg-gray-100 overflow-hidden">
+              <div className="relative h-48 bg-gray-100 dark:bg-gray-900 overflow-hidden">
                 {product.image ? (
                   <img
                     src={product.image.startsWith('http') ? product.image : `http://localhost:5000${product.image}`}
@@ -301,7 +301,7 @@ const ProductsGrid = () => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Package className="h-12 w-12 text-gray-400" />
+                    <Package className="h-12 w-12 text-gray-400 dark:text-gray-600" />
                   </div>
                 )}
                 
@@ -330,7 +330,7 @@ const ProductsGrid = () => {
                   className={`absolute top-2 right-2 p-2 rounded-full transition-colors ${
                     isFavorite(product._id)
                       ? 'bg-red-500 text-white'
-                      : 'bg-white text-gray-400 hover:text-red-500'
+                      : 'bg-white dark:bg-gray-900 text-gray-400 hover:text-red-500 dark:hover:text-red-400'
                   }`}
                 >
                   <Heart className={`h-4 w-4 ${isFavorite(product._id) ? 'fill-current' : ''}`} />
@@ -339,8 +339,8 @@ const ProductsGrid = () => {
                 {/* Actions rapides */}
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-2">
-                    <button className="p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors">
-                      <Eye className="h-5 w-5 text-gray-700" />
+                    <button className="p-3 bg-white dark:bg-gray-900 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <Eye className="h-5 w-5 text-gray-700 dark:text-gray-200" />
                     </button>
                     {!isOutOfStock && (
                       <button
@@ -357,11 +357,11 @@ const ProductsGrid = () => {
               {/* Contenu */}
               <div className="p-4">
                 <div className="mb-2">
-                  <p className="text-sm text-gray-500 font-medium">{product.brand}</p>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-primary-600 transition-colors line-clamp-2">
+                  <p className="text-sm font-medium text-white group-hover:text-primary-400 transition-colors">{product.brand}</p>
+                  <h3 className="font-semibold text-white group-hover:text-primary-400 transition-colors line-clamp-2">
                     {product.name || product.nom}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-white group-hover:text-primary-400 transition-colors">
                     {product.dosage} - {product.form}
                   </p>
                 </div>
@@ -388,10 +388,10 @@ const ProductsGrid = () => {
                 {/* Actions */}
                 <div className="flex space-x-2 mb-3">
                   <button
-                    onClick={() => {
+                    onClick={e => {
                       handleAddToCart(product);
                       // Feedback visuel temporaire
-                      const btn = event.target.closest('button');
+                      const btn = e.currentTarget;
                       const originalText = btn.innerHTML;
                       btn.innerHTML = '<span class="text-sm">✓ Ajouté</span>';
                       btn.classList.add('bg-green-600');
@@ -401,26 +401,26 @@ const ProductsGrid = () => {
                       }, 1000);
                     }}
                     disabled={isOutOfStock}
-                    className="flex-1 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 text-white px-3 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-1"
+                        className="flex-1 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-3 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-1"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     <span>Ajouter</span>
                   </button>
                   
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Eye className="h-4 w-4 text-gray-600" />
+                  <button className="p-2 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <Eye className="h-4 w-4 text-gray-600 dark:text-gray-200" />
                   </button>
                 </div>
 
                 {/* Informations d'évaluation */}
-                <div className="flex items-center justify-center text-xs text-gray-500">
+                <div className="flex items-center justify-center text-xs text-gray-500 dark:text-gray-300">
                   <div className="flex items-center">
                     <Star className="h-4 w-4 text-yellow-400 fill-current" />
                     <span className="ml-1">{product.statistics?.averageRating?.toFixed(1) || 'N/A'}</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-white group-hover:text-primary-400 transition-colors mt-2">
                   Réf: {product.sku}
                 </p>
               </div>
@@ -431,10 +431,10 @@ const ProductsGrid = () => {
 
       {/* Message si aucun produit */}
       {products.length === 0 && (
-        <div className="text-center py-12">
-          <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun produit disponible</h3>
-          <p className="text-gray-600">
+        <div className="text-center py-12 bg-white dark:bg-gray-900 rounded-xl">
+          <Package className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Aucun produit disponible</h3>
+          <p className="text-gray-600 dark:text-gray-300">
             Les produits seront bientôt disponibles
           </p>
         </div>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import ThemeToggle from './ThemeToggle.jsx';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -33,7 +34,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-emerald-200 to-teal-300 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden animate-gradientShift">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-emerald-200 to-teal-300 dark:from-gray-800 dark:via-gray-900 dark:to-black py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden animate-gradientShift">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Animated gradient overlay */}
@@ -56,20 +57,24 @@ const LoginForm = () => {
         <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.4) 1px, transparent 0)', backgroundSize: '20px 20px'}}></div>
       </div>
       
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
+
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center animate-fadeInUp">
           <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-gradient-to-r from-primary-500 to-green-500 shadow-lg transform hover:scale-105 transition-transform duration-300 animate-float">
             <Sparkles className="h-8 w-8 text-white animate-pulse" />
           </div>
-          <h2 className="mt-6 text-center text-4xl font-bold bg-gradient-to-r from-primary-600 to-green-600 bg-clip-text text-transparent">
+          <h2 className="mt-6 text-center text-4xl font-bold bg-gradient-to-r from-primary-600 to-green-600 dark:from-primary-400 dark:to-green-400 bg-clip-text text-transparent">
             Bienvenue !
           </h2>
-          <p className="mt-2 text-center text-lg text-gray-600 font-medium">
+          <p className="mt-2 text-center text-lg text-gray-600 dark:text-gray-300 font-medium">
             Connectez-vous à votre espace PharmaMOS
           </p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20 animate-slideInRight">
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20 dark:border-gray-700/50 animate-slideInRight">
         <form className="space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="rounded-xl bg-red-50 p-4 border-l-4 border-red-400 animate-shake">
@@ -84,7 +89,7 @@ const LoginForm = () => {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Adresse email
               </label>
               <div className="mt-1 relative">
@@ -99,14 +104,14 @@ const LoginForm = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm transition-all duration-200 hover:border-primary-300"
+                  className="appearance-none relative block w-full px-3 py-3 pl-10 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white/50 dark:bg-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm transition-all duration-200 hover:border-primary-300"
                   placeholder="votre@email.com"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Mot de passe
               </label>
               <div className="mt-1 relative">
@@ -121,7 +126,7 @@ const LoginForm = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-3 pl-10 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm transition-all duration-200 hover:border-primary-300"
+                  className="appearance-none relative block w-full px-3 py-3 pl-10 pr-10 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white/50 dark:bg-gray-700/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm transition-all duration-200 hover:border-primary-300"
                   placeholder="Votre mot de passe"
                 />
                 <button
@@ -130,9 +135,9 @@ const LoginForm = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-primary-600 transition-colors duration-200" />
+                    <EyeOff className="h-5 w-5 text-gray-400 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-primary-600 transition-colors duration-200" />
+                    <Eye className="h-5 w-5 text-gray-400 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200" />
                   )}
                 </button>
               </div>
@@ -143,7 +148,7 @@ const LoginForm = () => {
             <div className="text-sm">
               <Link
                 to="/forgot-password"
-                className="font-medium text-primary-600 hover:text-primary-500 transition-colors"
+                className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
               >
                 Mot de passe oublié ?
               </Link>
@@ -171,11 +176,11 @@ const LoginForm = () => {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Vous n'avez pas de compte ?{' '}
               <Link
                 to="/register"
-                className="font-medium text-primary-600 hover:text-primary-500 transition-colors"
+                className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors"
               >
                 Créez votre compte
               </Link>

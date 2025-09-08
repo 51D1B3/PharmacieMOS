@@ -164,15 +164,15 @@ const ClientChatWidget = ({ predefinedMessage, isOpen: isOpenProp, onClose: onCl
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-20 right-4 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 transition-all duration-300 ${
+        <div className={`fixed bottom-20 right-4 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 transition-all duration-300 ${
           isMinimized ? 'w-80 h-14' : 'w-96 h-[500px]'
         }`}>
           
           {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-green-600 text-white rounded-t-xl relative">
+          <div className="flex items-center justify-between p-4 bg-green-600 text-white rounded-t-xl relative dark:bg-gray-800">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center relative">
-                <User className="h-4 w-4" />
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center relative dark:bg-primary-700">
+                <User className="h-4 w-4 text-white" />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold text-[10px]">
                     {unreadCount > 9 ? '9+' : unreadCount}
@@ -212,7 +212,7 @@ const ClientChatWidget = ({ predefinedMessage, isOpen: isOpenProp, onClose: onCl
           {!isMinimized && (
             <>
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 h-80 bg-gray-50">
+              <div className="flex-1 overflow-y-auto p-4 h-80 bg-gray-50 dark:bg-gray-900">
                 <div className="space-y-4">
                   {messages.map((message) => (
                     <div
@@ -223,18 +223,18 @@ const ClientChatWidget = ({ predefinedMessage, isOpen: isOpenProp, onClose: onCl
                         onClick={(e) => handleMessageClick(message, e)}
                         className={`max-w-xs px-4 py-2 rounded-lg cursor-pointer hover:opacity-80 ${
                         message.isAdmin
-                          ? 'bg-white text-gray-800 rounded-bl-none shadow-sm'
-                          : 'bg-green-500 text-white rounded-br-none'
+                          ? 'bg-white text-gray-800 rounded-bl-none shadow-sm dark:bg-gray-800 dark:text-gray-100'
+                          : 'bg-green-500 text-white rounded-br-none dark:bg-primary-600'
                       }`}>
                         <p className="text-sm">{message.text}</p>
                         <div className="flex items-center justify-between mt-1">
                           <p className={`text-xs ${
-                            message.isAdmin ? 'text-gray-500' : 'text-green-100'
+                            message.isAdmin ? 'text-gray-500 dark:text-gray-300' : 'text-green-100'
                           }`}>
                             {formatTime(message.timestamp)}
                           </p>
                           {message.isEdited && (
-                            <span className={`text-xs italic ${message.isAdmin ? 'text-gray-400' : 'text-green-200'}`}>
+                            <span className={`text-xs italic ${message.isAdmin ? 'text-gray-400 dark:text-gray-400' : 'text-green-200'}`}>
                               modifié
                             </span>
                           )}
@@ -261,14 +261,14 @@ const ClientChatWidget = ({ predefinedMessage, isOpen: isOpenProp, onClose: onCl
               </div>
 
               {/* Input */}
-              <div className="p-4 border-t border-gray-200">
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                 <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
                   <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Tapez votre message..."
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   />
                   <button
                     type="submit"
@@ -283,19 +283,19 @@ const ClientChatWidget = ({ predefinedMessage, isOpen: isOpenProp, onClose: onCl
                 <div className="flex flex-wrap gap-2 mt-3">
                   <button
                     onClick={() => setNewMessage('Bonjour, j\'ai une question sur un médicament')}
-                    className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-700"
+                    className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200"
                   >
                     Question médicament
                   </button>
                   <button
                     onClick={() => setNewMessage('Quels sont vos horaires d\'ouverture?')}
-                    className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-700"
+                    className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200"
                   >
                     Horaires
                   </button>
                   <button
                     onClick={() => setNewMessage('Avez-vous ce produit en stock?')}
-                    className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-700"
+                    className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-200"
                   >
                     Stock produit
                   </button>

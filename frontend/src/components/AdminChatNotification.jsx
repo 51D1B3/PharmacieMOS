@@ -86,7 +86,7 @@ const AdminChatNotification = () => {
   return (
     <>
       {/* Chat Notification Button */}
-      <div className="relative">
+      <div className="relative mb-8">
         <button
           onClick={() => setIsOpen(true)}
           className="relative p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
@@ -103,13 +103,13 @@ const AdminChatNotification = () => {
       {/* Chat Modal */}
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl h-[80vh] flex overflow-hidden">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-6xl h-[80vh] flex overflow-hidden border border-gray-200 dark:border-gray-700">
             
             {/* Conversations List */}
-            <div className="w-1/3 border-r border-gray-200 flex flex-col">
-              <div className="p-4 border-b border-gray-200">
+            <div className="w-1/3 border-r border-gray-200 dark:border-gray-700 flex flex-col bg-white dark:bg-gray-900">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Messages clients</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Messages clients</h3>
                   <button
                     onClick={() => setIsOpen(false)}
                     className="p-1 hover:bg-gray-100 rounded-lg"
@@ -125,7 +125,7 @@ const AdminChatNotification = () => {
                     placeholder="Rechercher un client..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
@@ -135,8 +135,8 @@ const AdminChatNotification = () => {
                   <div
                     key={conversation.id}
                     onClick={() => handleConversationSelect(conversation)}
-                    className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                      selectedConversation?.id === conversation.id ? 'bg-green-50 border-l-4 border-l-green-500' : ''
+                    className={`p-4 border-b border-gray-100 dark:border-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                      selectedConversation?.id === conversation.id ? 'bg-green-50 dark:bg-primary-900/30 border-l-4 border-l-green-500' : ''
                     }`}
                   >
                     <div className="flex items-center space-x-3">
@@ -151,7 +151,7 @@ const AdminChatNotification = () => {
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-gray-900 truncate">
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100 truncate">
                             {conversation.clientName}
                           </h4>
                           <div className="flex items-center space-x-2">
@@ -165,7 +165,7 @@ const AdminChatNotification = () => {
                             )}
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 truncate mt-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-300 truncate mt-1">
                           {conversation.lastMessage}
                         </p>
                       </div>
@@ -176,11 +176,11 @@ const AdminChatNotification = () => {
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col bg-white dark:bg-gray-900">
               {selectedConversation ? (
                 <>
                   {/* Chat Header */}
-                  <div className="p-4 border-b border-gray-200 bg-gray-50">
+                  <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
                     <div className="flex items-center space-x-3">
                       <div className="relative">
                         <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-medium">
@@ -191,8 +191,8 @@ const AdminChatNotification = () => {
                         )}
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900">{selectedConversation.clientName}</h4>
-                        <p className="text-sm text-gray-600">
+                        <h4 className="font-medium text-gray-900 dark:text-gray-100">{selectedConversation.clientName}</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
                           {selectedConversation.isOnline ? 'En ligne' : `Vu ${formatTime(selectedConversation.timestamp)}`}
                         </p>
                       </div>
@@ -200,7 +200,7 @@ const AdminChatNotification = () => {
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-gray-900">
                     {messages.map((message) => (
                       <div
                         key={message.id}
@@ -210,17 +210,17 @@ const AdminChatNotification = () => {
                           onClick={(e) => handleMessageClick(message, e)}
                           className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg cursor-pointer hover:opacity-80 ${
                             message.isAdmin
-                              ? 'bg-green-500 text-white rounded-br-none'
-                              : 'bg-gray-200 text-gray-900 rounded-bl-none'
+                              ? 'bg-green-500 text-white rounded-br-none dark:bg-primary-600'
+                              : 'bg-gray-200 text-gray-900 rounded-bl-none dark:bg-gray-800 dark:text-gray-100'
                           }`}
                         >
                           <p className="text-sm">{message.text}</p>
                           <div className="flex items-center justify-between mt-1">
-                            <p className={`text-xs ${message.isAdmin ? 'text-green-100' : 'text-gray-500'}`}>
+                            <p className={`text-xs ${message.isAdmin ? 'text-green-100' : 'text-gray-500 dark:text-gray-300'}`}>
                               {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
                             {message.isEdited && (
-                              <span className={`text-xs italic ${message.isAdmin ? 'text-green-200' : 'text-gray-400'}`}>
+                              <span className={`text-xs italic ${message.isAdmin ? 'text-green-200' : 'text-gray-400 dark:text-gray-400'}`}>
                                 modifié
                               </span>
                             )}
@@ -231,14 +231,14 @@ const AdminChatNotification = () => {
                   </div>
 
                   {/* Message Input */}
-                  <div className="p-4 border-t border-gray-200">
+                  <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                     <form onSubmit={handleSendMessage} className="flex items-center space-x-3">
                       <input
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Tapez votre réponse..."
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                       />
                       <button
                         type="submit"
@@ -251,13 +251,13 @@ const AdminChatNotification = () => {
                   </div>
                 </>
               ) : (
-                <div className="flex-1 flex items-center justify-center">
+                <div className="flex-1 flex items-center justify-center bg-white dark:bg-gray-900">
                   <div className="text-center">
-                    <Users className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    <Users className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                       Sélectionnez une conversation
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-300">
                       Choisissez un client dans la liste pour commencer à discuter
                     </p>
                   </div>

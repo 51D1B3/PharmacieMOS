@@ -117,8 +117,8 @@ const UserDropdowns = ({ user }) => {
         onMouseEnter={() => handleMouseEnter('profile')}
         onMouseLeave={handleMouseLeave}
       >
-        <button className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 transition-colors">
-          <User className="h-5 w-5" />
+        <button className="flex items-center space-x-2 text-white hover:text-primary-200 transition-colors">
+          <User className="h-5 w-5 text-white" />
           <span className="text-sm font-medium">Mon profil</span>
         </button>
 
@@ -130,7 +130,7 @@ const UserDropdowns = ({ user }) => {
                   <User className="h-10 w-10 text-gray-400" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">{userProfileData.fullName}</h4>
+                  <h4 className="font-medium text-white">{userProfileData.fullName}</h4>
                   <p className="text-sm text-gray-500">Client fidèle</p>
                 </div>
               </div>
@@ -156,8 +156,8 @@ const UserDropdowns = ({ user }) => {
         onMouseEnter={() => handleMouseEnter('orders')}
         onMouseLeave={handleMouseLeave}
       >
-        <button className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 transition-colors">
-          <Package className="h-5 w-5" />
+        <button className="flex items-center space-x-2 text-white hover:text-primary-200 transition-colors">
+          <Package className="h-5 w-5 text-white" />
           <span className="text-sm font-medium">Mes commandes</span>
         </button>
 
@@ -214,8 +214,8 @@ const UserDropdowns = ({ user }) => {
         onMouseEnter={() => handleMouseEnter('settings')}
         onMouseLeave={handleMouseLeave}
       >
-        <button className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 transition-colors">
-          <Settings className="h-5 w-5" />
+        <button className="flex items-center space-x-2 text-white hover:text-primary-200 transition-colors">
+          <Settings className="h-5 w-5 text-white" />
           <span className="text-sm font-medium">Paramètres</span>
         </button>
 

@@ -88,6 +88,8 @@ export const ChatProvider = ({ children }) => {
   }, [user, conversations, unreadCount]);
 
   const getRandomMessage = () => {
+    if (!user) return ''; // Prevent crash if user is null
+
     const clientMessages = [
       'Merci pour votre aide',
       'Avez-vous d\'autres recommandations?',
@@ -109,6 +111,8 @@ export const ChatProvider = ({ children }) => {
   };
 
   const sendMessage = (conversationId, text, targetUserId = null) => {
+    if (!user) return; // Prevent crash if user is null
+
     const newMessage = {
       id: Date.now(),
       senderId: user._id,
@@ -274,5 +278,3 @@ export const ChatProvider = ({ children }) => {
     </ChatContext.Provider>
   );
 };
-
-export default ChatContext;
