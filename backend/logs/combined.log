@@ -76,3 +76,11 @@
 {"level":"info","message":"💬 Socket.IO: ws://localhost:5000","service":"pharmacie-api","timestamp":"2025-09-07 20:33:57"}
 {"level":"warn","message":"⚠️ MongoDB déconnecté","service":"pharmacie-api","timestamp":"2025-09-07 20:51:29"}
 {"level":"info","message":"🔄 MongoDB reconnecté","service":"pharmacie-api","timestamp":"2025-09-07 20:52:58"}
+{"level":"info","message":"✅ Socket.IO handlers configurés","service":"pharmacie-api","timestamp":"2025-09-08 01:12:54"}
+{"level":"info","message":"✅ MongoDB connecté: ac-727tjjg-shard-00-02.i2yw1cl.mongodb.net","service":"pharmacie-api","timestamp":"2025-09-08 01:12:58"}
+{"level":"info","message":"✅ Socket.IO handlers configurés","service":"pharmacie-api","timestamp":"2025-09-08 01:25:23"}
+{"level":"info","message":"✅ MongoDB connecté: ac-727tjjg-shard-00-02.i2yw1cl.mongodb.net","service":"pharmacie-api","timestamp":"2025-09-08 01:25:26"}
+{"level":"info","message":"✅ Socket.IO handlers configurés","service":"pharmacie-api","timestamp":"2025-09-08 01:40:38"}
+{"level":"info","message":"✅ MongoDB connecté: ac-727tjjg-shard-00-00.i2yw1cl.mongodb.net","service":"pharmacie-api","timestamp":"2025-09-08 01:40:45"}
+{"level":"info","message":"✅ Socket.IO handlers configurés","service":"pharmacie-api","timestamp":"2025-09-08 02:51:52"}
+{"level":"info","message":"✅ MongoDB connecté: ac-727tjjg-shard-00-00.i2yw1cl.mongodb.net","service":"pharmacie-api","timestamp":"2025-09-08 02:51:58"}

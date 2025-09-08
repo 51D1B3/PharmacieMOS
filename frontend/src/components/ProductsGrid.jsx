@@ -291,7 +291,7 @@ const ProductsGrid = () => {
               <div className="relative h-48 bg-gray-100 dark:bg-gray-900 overflow-hidden">
                 {product.image ? (
                   <img
-                    src={product.image.startsWith('http') ? product.image : `http://localhost:5000${product.image}`}
+                    src={product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${product.image}`}
                     alt={product.name || product.nom}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {

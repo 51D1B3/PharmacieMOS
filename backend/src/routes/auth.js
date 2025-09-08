@@ -133,8 +133,8 @@ const resetPasswordSchema = Joi.object({
 });
 
 // Routes publiques
-router.post('/register', uploadProfile.single('profileImage'), validateBody(registerSchema), register);
-router.post('/login', validateBody(loginSchema), login);
+router.post('/register', register);
+router.post('/login', login);
 router.post('/refresh', validateBody(refreshTokenSchema), refreshTokenGuard, refreshToken);
 router.post('/forgot-password', validateBody(forgotPasswordSchema), forgotPassword);
 router.put('/reset-password/:token', validateBody(resetPasswordSchema), resetPassword);

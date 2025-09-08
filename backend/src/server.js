@@ -33,6 +33,8 @@ const chatRoutes = require('./routes/chat');
 const paymentRoutes = require('./routes/payments');
 const adminRoutes = require('./routes/admin');
 const posRoutes = require('./routes/pos');
+const prescriptionRoutes = require('./routes/prescriptions');
+const notificationRoutes = require('./routes/notifications');
 
 const app = express();
 const server = createServer(app);
@@ -149,6 +151,8 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/pos', posRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Route 404
 app.use(notFoundHandler);

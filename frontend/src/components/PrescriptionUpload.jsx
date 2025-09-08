@@ -10,7 +10,7 @@ const PrescriptionUpload = () => {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const fileInputRef = useRef(null);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -72,8 +72,8 @@ const PrescriptionUpload = () => {
       formData.append('clientName', user ? `${user.prenom} ${user.nom}` : 'Client anonyme');
       formData.append('uploadDate', new Date().toISOString());
       
-      // Envoyer les fichiers au backend en utilisant la variable d'environnement
-      const response = await fetch(`${API_URL}/api/prescriptions/upload`, {
+      // Envoyer les fichiers au backend
+      const response = await fetch('/api/prescriptions/upload', {
         method: 'POST',
         body: formData,
         headers: {
@@ -85,7 +85,7 @@ const PrescriptionUpload = () => {
         const uploadResult = await response.json();
         
         // Envoyer notification à l'admin avec les détails de l'ordonnance
-        await fetch(`${API_URL}/api/notifications`, {
+        await fetch('/api/notifications', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

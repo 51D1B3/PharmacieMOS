@@ -63,17 +63,12 @@ const authGuard = async (req, res, next) => {
     req.userPermissions = Array.isArray(user.permissions) ? user.permissions : [];
     
     // Logger l'accès
-    logger.audit('API_ACCESS', user, {
-      method: req.method,
-      path: req.path,
-      ip: req.ip,
-      userAgent: req.get('User-Agent')
-    });
+    console.log('Accès API pour:', user.email);
     
     next();
     
   } catch (error) {
-    logger.error('Erreur d\'authentification:', error);
+    console.error('Erreur d\'authentification:', error);
     
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
@@ -172,7 +167,7 @@ const refreshTokenGuard = async (req, res, next) => {
     next();
     
   } catch (error) {
-    logger.error('Erreur de refresh token:', error);
+    console.error('Erreur de refresh token:', error);
     
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
@@ -210,12 +205,7 @@ const requirePermission = (permission) => {
     }
     
     if (!req.userPermissions.includes(permission)) {
-      logger.security('Tentative d\'accès non autorisé', {
-        user: req.user._id,
-        permission,
-        path: req.path,
-        method: req.method
-      });
+      console.log('Tentative d\'accès non autorisé pour:', req.user.email);
       
       return res.status(403).json({
         success: false,
@@ -242,13 +232,7 @@ const requireRole = (roles) => {
     }
     
     if (!roleArray.includes(req.userRole)) {
-      logger.security('Tentative d\'accès avec rôle insuffisant', {
-        user: req.user._id,
-        userRole: req.userRole,
-        requiredRoles: roleArray,
-        path: req.path,
-        method: req.method
-      });
+      console.log('Tentative d\'accès avec rôle insuffisant pour:', req.user.email);
       
       return res.status(403).json({
         success: false,
@@ -295,13 +279,7 @@ const requireOwnership = (resourceModel, resourceIdField = 'id') => {
       
       // Vérifier si l'utilisateur est propriétaire ou admin
       if (resource.user && resource.user.toString() !== req.userId.toString() && req.userRole !== 'admin') {
-        logger.security('Tentative d\'accès à une ressource non autorisée', {
-          user: req.user._id,
-          resourceId,
-          resourceOwner: resource.user,
-          path: req.path,
-          method: req.method
-        });
+        console.log('Tentative d\'accès à une ressource non autorisée pour:', req.user.email);
         
         return res.status(403).json({
           success: false,
@@ -314,7 +292,7 @@ const requireOwnership = (resourceModel, resourceIdField = 'id') => {
       next();
       
     } catch (error) {
-      logger.error('Erreur lors de la vérification de propriété:', error);
+      console.error('Erreur lors de la vérification de propriété:', error);
       return res.status(500).json({
         success: false,
         message: 'Erreur lors de la vérification de propriété',

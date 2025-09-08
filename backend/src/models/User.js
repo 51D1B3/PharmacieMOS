@@ -143,7 +143,11 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 
 userSchema.methods.addRefreshToken = function(token, device = 'unknown', ipAddress = null, userAgent = null) {
   const expiresAt = new Date();
-  expiresAt.setHours(expiresAt.getHours() + 1); // 1 heure
+  expiresAt.setDate(expiresAt.getDate() + 7); // 7 jours
+
+  if (!this.refreshTokens) {
+    this.refreshTokens = [];
+  }
 
   this.refreshTokens.push({
     token,
@@ -160,10 +164,16 @@ userSchema.methods.addRefreshToken = function(token, device = 'unknown', ipAddre
 };
 
 userSchema.methods.removeRefreshToken = function(token) {
+  if (!this.refreshTokens) {
+    this.refreshTokens = [];
+  }
   this.refreshTokens = this.refreshTokens.filter(rt => rt.token !== token);
 };
 
 userSchema.methods.clearExpiredTokens = function() {
+  if (!this.refreshTokens) {
+    this.refreshTokens = [];
+  }
   const now = new Date();
   this.refreshTokens = this.refreshTokens.filter(rt => rt.expiresAt > now);
 };
@@ -199,7 +209,10 @@ userSchema.statics.findByEmail = function(email) {
 };
 
 userSchema.statics.findByRefreshToken = function(token) {
-  return this.findOne({ 'refreshTokens.token': token });
+  return this.findOne({ 
+    'refreshTokens.token': token,
+    'refreshTokens.expiresAt': { $gt: new Date() }
+  });
 };
 
 module.exports = mongoose.model('User', userSchema);

@@ -10,7 +10,7 @@ const ProductCard = ({ product, onAddToCart }) => {
 
   // Construire l'URL de l'image
   const imageUrl = product.image && product.image !== '/uploads/products/default.png'
-    ? `${process.env.REACT_APP_API_URL}${product.image}`
+    ? `${import.meta.env.VITE_API_URL}${product.image}`
     // URL d'un placeholder si aucune image n'est disponible
     : `https://via.placeholder.com/400x400.png/f3f4f6/9ca3af?text=${encodeURIComponent(product.nom || product.name || 'Produit')}`;
 

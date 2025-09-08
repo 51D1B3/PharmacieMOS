@@ -1,33 +1,37 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { AppError } = require('./errorHandler');
 
-// Créer le dossier s'il n'existe pas
-const uploadDir = 'uploads/profiles';
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configuration du stockage pour Multer
+// Configuration du stockage
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, '../../uploads/profiles');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
+  filename: (req, file, cb) => {
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
   }
 });
 
-// Filtre pour n'accepter que certains types d'images
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp/;
-  const mimetype = allowedTypes.test(file.mimetype);
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+// Configuration multer
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Seules les images sont autorisées'));
+    }
+  }
+});
 
-  if (mimetype && extname) return cb(null, true);
-  cb(new AppError('Erreur : Seuls les fichiers image (jpeg, jpg, png, gif, webp) sont autorisés !', 400));
-};
-
-module.exports = multer({ storage, fileFilter, limits: { fileSize: 2 * 1024 * 1024 } }); // Limite de 2MB
+module.exports = upload;
