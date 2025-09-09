@@ -3,7 +3,7 @@ import { MessageCircle, Send, ChevronDown } from 'lucide-react';
 import io from 'socket.io-client';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
-const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:5000');
+const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
 const ChatWidget = ({ predefinedMessage }) => {
   const { user } = useAuth();

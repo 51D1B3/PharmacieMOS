@@ -9,18 +9,20 @@ const jwt = require('jsonwebtoken');
 const generateTokens = (user) => {
   const accessToken = jwt.sign(
     { 
-      id: user._id, 
-      email: user.email, 
+      id: user._id,
+      email: user.email,
       role: user.role,
-      permissions: user.permissions 
+      permissions: user.permissions
     },
-    process.env.JWT_SECRET,
+    // Utiliser une valeur par défaut si le secret n'est pas défini
+    process.env.JWT_SECRET || 'votre_super_secret_pour_access_token_a_changer',
     { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
   );
 
   const refreshToken = jwt.sign(
     { id: user._id },
-    process.env.JWT_REFRESH_SECRET,
+    // Utiliser une valeur par défaut si le secret n'est pas défini
+    process.env.JWT_REFRESH_SECRET || 'votre_super_secret_pour_refresh_token_a_changer',
     { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
   );
 
@@ -30,14 +32,6 @@ const generateTokens = (user) => {
 // Envoyer la réponse avec les tokens
 const sendTokenResponse = async (req, res, user, statusCode) => {
   const { accessToken, refreshToken } = generateTokens(user);
-
-  try {
-    // Ajouter le refresh token à l'utilisateur
-    user.addRefreshToken(refreshToken, 'web', req.ip, req.get('User-Agent'));
-    await user.save();
-  } catch (error) {
-    console.error('Erreur lors de la sauvegarde du refresh token:', error);
-  }
 
   // Réponse JSON
   res.status(statusCode).json({
@@ -165,16 +159,11 @@ const refreshToken = asyncHandler(async (req, res, next) => {
   }
 
   // Vérifier le refresh token
-  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'votre_super_secret_pour_refresh_token_a_changer');
   
   // Vérifier si l'utilisateur existe et si le token est valide
-  let user = await User.findByRefreshToken(refreshToken);
+  const user = await User.findById(decoded.id);
   if (!user) {
-    return next(new AppError('Refresh token invalide', 401, 'INVALID_REFRESH_TOKEN'));
-  }
-
-  // Vérifier si l'utilisateur est actif
-  if (!user.isActive) {
     return next(new AppError('Compte désactivé', 401, 'ACCOUNT_DISABLED'));
   }
 
@@ -190,15 +179,6 @@ const refreshToken = asyncHandler(async (req, res, next) => {
 // @access  Private
 const logout = asyncHandler(async (req, res, next) => {
   const { refreshToken } = req.body;
-
-  if (refreshToken) {
-    // Supprimer le refresh token de la base de données
-    let user = await User.findByRefreshToken(refreshToken);
-    if (user) {
-      user.removeRefreshToken(refreshToken);
-      await user.save();
-    }
-  }
 
   // Supprimer les cookies
   res.cookie('accessToken', 'none', {

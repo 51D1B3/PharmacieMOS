@@ -194,28 +194,28 @@ const AdminClientsManager = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4">
           <div className="flex items-center space-x-2">
             <Wifi className="h-5 w-5 text-blue-600" />
             <span className="text-sm font-medium text-gray-600">Connectés</span>
           </div>
           <p className="text-2xl font-bold text-blue-600 mt-1">{stats.connectedClientsCount}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+  <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4">
           <div className="flex items-center space-x-2">
             <UserCheck className="h-5 w-5 text-green-600" />
             <span className="text-sm font-medium text-gray-600">Clients actifs</span>
           </div>
           <p className="text-2xl font-bold text-green-600 mt-1">{stats.activeClients}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+  <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4">
           <div className="flex items-center space-x-2">
             <Star className="h-5 w-5 text-purple-600" />
             <span className="text-sm font-medium text-gray-600">Clients VIP</span>
           </div>
           <p className="text-2xl font-bold text-purple-600 mt-1">{stats.vipClients}</p>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+  <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4">
           <div className="flex items-center space-x-2">
             <DollarSign className="h-5 w-5 text-green-600" />
             <span className="text-sm font-medium text-gray-600">CA total</span>
@@ -236,7 +236,7 @@ const AdminClientsManager = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+  <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="flex-1">
             <div className="relative">
@@ -270,7 +270,7 @@ const AdminClientsManager = () => {
       {/* Clients Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredClients.map((client) => (
-          <div key={client.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div key={client.id} className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <div className={`p-2 rounded-full ${
@@ -374,11 +374,11 @@ const AdminClientsManager = () => {
       {/* Client Details Modal */}
       {showDetails && selectedClient && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <h3 className="text-xl font-semibold text-gray-900">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                     Profil client - {selectedClient.name}
                   </h3>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(selectedClient.status)}`}>
@@ -398,8 +398,8 @@ const AdminClientsManager = () => {
               {/* Client Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Informations personnelles</h4>
-                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Informations personnelles</h4>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
                     <div className="flex items-center space-x-2">
                       <Mail className="h-4 w-4 text-gray-400" />
                       <span>{selectedClient.email}</span>
@@ -420,8 +420,8 @@ const AdminClientsManager = () => {
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Statistiques d'achat</h4>
-                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Statistiques d'achat</h4>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Total dépensé:</span>
                       <span className="font-semibold text-green-600">{formatCurrency(selectedClient.totalSpent)}</span>
@@ -451,10 +451,10 @@ const AdminClientsManager = () => {
 
               {/* Preferred Categories */}
               <div>
-                <h4 className="font-medium text-gray-900 mb-3">Catégories préférées</h4>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Catégories préférées</h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedClient.preferredCategories.map((category, index) => (
-                    <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                    <span key={index} className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm rounded-full">
                       {category}
                     </span>
                   ))}
@@ -464,15 +464,15 @@ const AdminClientsManager = () => {
               {/* Notes */}
               {selectedClient.notes && (
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Notes</h4>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <p className="text-gray-700">{selectedClient.notes}</p>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Notes</h4>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <p className="text-gray-700 dark:text-gray-200">{selectedClient.notes}</p>
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
               <button 
                 onClick={() => setShowDetails(false)}
                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"

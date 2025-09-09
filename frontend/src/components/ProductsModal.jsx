@@ -194,7 +194,7 @@ const ProductsModal = ({ isOpen, onClose }) => {
                       <div className="relative h-40 bg-gray-100 overflow-hidden">
                         {product.image ? (
                           <img
-                            src={`${process.env.REACT_APP_API_URL}${product.image}`}
+                            src={product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_URL || ''}${product.image}`}
                             alt={product.name || product.nom}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             onError={(e) => {

@@ -219,7 +219,7 @@ const AdminProductsManager = () => {
                           {product.image ? (
                             <img
                               className="h-12 w-12 rounded-lg object-cover"
-                              src={`${process.env.REACT_APP_API_URL}${product.image}`}
+                              src={product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_URL || ''}${product.image}`}
                               alt={product.name}
                               onError={(e) => {
                                 e.target.src = `https://via.placeholder.com/100x100.png/f3f4f6/9ca3af?text=${encodeURIComponent(product.name?.substring(0, 2) || 'PR')}`;

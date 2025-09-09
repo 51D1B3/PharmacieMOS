@@ -73,7 +73,7 @@ const CartDrawer = ({
                     <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
                       {item.product.image ? (
                         <img
-                          src={`${process.env.REACT_APP_API_URL}${item.product.image}`}
+                          src={item.product.image.startsWith('http') ? item.product.image : `${import.meta.env.VITE_API_URL || ''}${item.product.image}`}
                           alt={item.product.name || 'Product image'}
                           className="w-full h-full object-cover"
                           onError={(e) => { e.target.onerror = null; e.target.src="https://via.placeholder.com/150?text=No+Image" }} // Fallback for broken images

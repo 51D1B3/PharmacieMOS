@@ -53,9 +53,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const { user, tokens } = await apiService.login(email, password);
-      localStorage.setItem('accessToken', tokens.accessToken);
-      localStorage.setItem('refreshToken', tokens.refreshToken);
+      const { user, accessToken, refreshToken } = await apiService.login(email, password);
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
       
@@ -64,19 +64,48 @@ export const AuthProvider = ({ children }) => {
       
       return user; // Return user for role-based routing
     } catch (error) {
+      console.error('Erreur de connexion:', error);
+      
+      // Gestion spécifique des erreurs réseau
+      if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+        throw new Error('Impossible de se connecter au serveur. Vérifiez que le serveur backend est démarré.');
+      }
+      
+      // Gestion des erreurs de connexion refusée
+      if (error.code === 'ECONNREFUSED') {
+        throw new Error('Connexion refusée. Le serveur backend n\'est pas accessible.');
+      }
+      
       throw error;
     }
   };
 
   const register = async (userData) => {
     try {
-      const { user, tokens } = await apiService.register(userData);
-      localStorage.setItem('accessToken', tokens.accessToken);
-      localStorage.setItem('refreshToken', tokens.refreshToken);
+      const { user, accessToken, refreshToken } = await apiService.register(userData);
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
     } catch (error) {
-      throw error;
+      console.error('Erreur d\'inscription:', error);
+      console.error('Détails de l\'erreur:', error.response?.data);
+      
+      // Gestion spécifique des erreurs 400
+      if (error.response?.status === 400) {
+        const errorMessage = error.response.data?.message || error.response.data?.error;
+        if (errorMessage) {
+          throw new Error(errorMessage);
+        }
+        throw new Error('Données invalides. Vérifiez vos informations.');
+      }
+      
+      // Gestion des erreurs réseau
+      if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+        throw new Error('Impossible de se connecter au serveur.');
+      }
+      
+      throw new Error(error.response?.data?.message || 'Erreur lors de la création du compte');
     }
   };
 

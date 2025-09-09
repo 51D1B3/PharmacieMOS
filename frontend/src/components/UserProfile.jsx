@@ -35,7 +35,7 @@ const UserProfile = ({ user, onLogout }) => {
         <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-primary-200">
           {user?.profileImage ? (
             <img 
-              src={user.profileImage.startsWith('http') ? user.profileImage : `http://localhost:5000${user.profileImage}`}
+              src={user.profileImage.startsWith('http') ? user.profileImage : `${import.meta.env.VITE_API_URL || ''}${user.profileImage}`}
               alt={`${user.prenom} ${user.nom}`}
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -67,7 +67,7 @@ const UserProfile = ({ user, onLogout }) => {
               <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary-200">
                 {user?.profileImage ? (
                   <img 
-                    src={user.profileImage.startsWith('http') ? user.profileImage : `http://localhost:5000${user.profileImage}`}
+                    src={user.profileImage.startsWith('http') ? user.profileImage : `${import.meta.env.VITE_API_URL || ''}${user.profileImage}`}
                     alt={`${user.prenom} ${user.nom}`}
                     className="w-full h-full object-cover"
                     onError={(e) => {

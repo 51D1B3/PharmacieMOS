@@ -78,7 +78,37 @@ const PaymentModal = ({ isOpen, onClose, cartTotal, onPaymentSuccess }) => {
       setPurchasedMedications(medications);
       setProcessing(false);
       setShowSuccess(true);
-      
+
+      // Notifier l'admin d'un nouveau paiement
+      try {
+        await fetch('/api/notifications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          },
+          body: JSON.stringify({
+            type: 'payment',
+            title: 'Nouveau paiement client',
+            message: `Un paiement de ${amount} GNF a été effectué par un client.`,
+            targetRole: 'admin',
+            data: {
+              amount,
+              method: selectedMethod,
+              paidAt: new Date().toISOString(),
+              items: cartItems.map(item => ({
+                product: item.product._id,
+                name: item.product.name,
+                quantity: item.quantity
+              }))
+            }
+          })
+        });
+      } catch (err) {
+        // Ne bloque pas le paiement si la notif échoue
+        console.error('Erreur notification paiement:', err);
+      }
+
       // Afficher la notice après le message de succès
       setTimeout(() => {
         setShowSuccess(false);

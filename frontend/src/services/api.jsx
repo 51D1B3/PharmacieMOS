@@ -45,50 +45,36 @@ class ApiService {
 
   // Authentification
   async login(email, password) {
-    // if (USE_MOCK_DATA) {
-    //   await simulateApiDelay(1000);
-    //   if (simulateApiError()) {
-    //     throw new Error('Erreur de connexion');
-    //   }
-      
-    //   // Simuler une connexion réussie avec n'importe quel email/password
-    //   const mockResponse = {
-    //     user: mockUser,
-    //     accessToken: 'mock-access-token',
-    //     refreshToken: 'mock-refresh-token',
-    //   };
-    //   return mockResponse;
-    // }
-
     const response = await this.api.post('/auth/login', {
       email,
       password,
     });
-    return response.data.data;
+    // Accepte {data: {user, accessToken, refreshToken}} ou {user, accessToken, refreshToken}
+    const data = response.data?.data || response.data;
+    if (!data?.user || !data?.accessToken) {
+      throw new Error('Réponse de connexion invalide du serveur.');
+    }
+    return data;
   }
 
   async register(userData) {
-    // if (USE_MOCK_DATA) {
-    //   await simulateApiDelay(1500);
-    //   if (simulateApiError()) {
-    //     throw new Error('Erreur lors de la création du compte');
-    //   }
-      
-    //   // Simuler une inscription réussie
-    //   const mockResponse = {
-    //     user: {
-    //       ...mockUser,
-    //       ...userData,
-    //       _id: Date.now().toString(),
-    //     },
-    //     accessToken: 'mock-access-token',
-    //     refreshToken: 'mock-refresh-token',
-    //   };
-    //   return mockResponse;
-    // }
-
-    const response = await this.api.post('/auth/register', userData);
-    return response.data.data;
+    try {
+      console.log('Envoi des données d\'inscription:', userData);
+      const response = await this.api.post('/auth/register', userData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Réponse d\'inscription:', response.data);
+      const data = response.data?.data || response.data;
+      if (!data?.user || !data?.accessToken) {
+        throw new Error('Réponse d\'inscription invalide du serveur.');
+      }
+      return data;
+    } catch (error) {
+      console.error('Erreur API register:', error.response?.data);
+      throw error;
+    }
   }
 
   async refreshToken() {

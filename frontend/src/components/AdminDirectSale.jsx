@@ -81,7 +81,7 @@ const AdminDirectSale = () => {
       
       // Mettre à jour les stocks
       for (const item of cart) {
-        await fetch(`${process.env.REACT_APP_API_URL}/api/products/${item._id}/stock`, {
+        await fetch(`/api/products/${item._id}/stock`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
