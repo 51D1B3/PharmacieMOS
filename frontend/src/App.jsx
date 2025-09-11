@@ -107,7 +107,7 @@ const AppRoutes = () => {
 
 const App = () => {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true }}>
       <AuthProvider>
         <CartProvider>
           <ChatProvider>

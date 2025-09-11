@@ -75,7 +75,6 @@ const AdminDailySales = () => {
       case 'mtn_money': return 'MTN Money';
       case 'mobile_money': return 'Mobile Money';
       case 'card': return 'Carte bancaire';
-      case 'orange_money': return 'Orange Money';
       default: return 'Non spécifié';
     }
   };
@@ -87,7 +86,6 @@ const AdminDailySales = () => {
       case 'mtn_money': return <Smartphone className="h-4 w-4 text-yellow-600" />;
       case 'mobile_money': return <Smartphone className="h-4 w-4 text-blue-600" />;
       case 'card': return <CreditCard className="h-4 w-4 text-purple-600" />;
-      case 'orange_money': return <Smartphone className="h-4 w-4 text-orange-600" />;
       default: return <DollarSign className="h-4 w-4 text-gray-600" />;
     }
   };
