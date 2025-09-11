@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Mail, Lock, AlertCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, AlertCircle, ArrowRight, Sparkles, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
-import ThemeToggle from './ThemeToggle.jsx';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -57,9 +56,14 @@ const LoginForm = () => {
         <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.4) 1px, transparent 0)', backgroundSize: '20px 20px'}}></div>
       </div>
       
-      <div className="absolute top-4 right-4 z-20">
-        <ThemeToggle />
-      </div>
+      {/* Bouton retour vers LandingPage */}
+      <Link
+        to="/"
+        className="absolute top-6 left-6 z-20 group flex items-center space-x-2 px-4 py-2 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white font-medium rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-lg border border-white/20"
+      >
+        <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform duration-300" />
+        <span className="hidden sm:inline">Accueil</span>
+      </Link>
 
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center animate-fadeInUp">

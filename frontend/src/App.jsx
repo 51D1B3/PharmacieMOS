@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext.jsx';
 import { ChatProvider } from './contexts/ChatContext.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
+import LandingPage from './components/LandingPage.jsx';
+import AboutPage from './components/AboutPage.jsx';
 import LoginForm from './components/LoginForm.jsx';
 import RegisterForm from './components/RegisterForm.jsx';
 import Dashboard from './components/Dashboard.jsx';
@@ -54,6 +56,10 @@ const PublicRoute = ({ children }) => {
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Page d'accueil publique */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      
       {/* Routes publiques */}
       <Route
         path="/login"
@@ -98,9 +104,8 @@ const AppRoutes = () => {
         }
       />
 
-      {/* Redirection par défaut */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      {/* Redirection pour routes non trouvées */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
