@@ -4,8 +4,12 @@ const logger = require('../utils/logger');
 const connectDB = async () => {
   try {
     // Utiliser toujours MONGODB_URI, que ce soit en dev ou en prod.
-    const mongoURI = process.env.MONGODB_URI;
-    const conn = await mongoose.connect(mongoURI);
+    const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://51D1B3:Sidibe2004@cluster0.i2yw1cl.mongodb.net/PhacieDB';
+    
+    const conn = await mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    });
 
     logger.info(`✅ MongoDB connecté: ${conn.connection.host}`);
 
