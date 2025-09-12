@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const logger = require('../utils/logger');
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
+import logger from '../utils/logger.js';
 
 const authGuard = async (req, res, next) => {
   try {
@@ -302,7 +302,7 @@ const requireOwnership = (resourceModel, resourceIdField = 'id') => {
   };
 };
 
-module.exports = {
+export {
   authGuard,
   optionalAuth,
   refreshTokenGuard,

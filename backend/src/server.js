@@ -17,25 +17,11 @@ import cookieParser from 'cookie-parser';
 
 import logger from './utils/logger.js';
 import connectDB from './config/database.js';
-import socketHandler from './socket/socketHandler.js';
-import { setIO } from './socket/io.js';
+// import socketHandler from './socket/socketHandler.js';
+// import { setIO } from './socket/io.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
-// Import des routes
-import authRoutes from './routes/auth.js';
-import userRoutes from './routes/users.js';
-import productRoutes from './routes/products.js';
-import orderRoutes from './routes/orders.js';
-import cartRoutes from './routes/cart.js';
-import categoryRoutes from './routes/categories.js';
-import supplierRoutes from './routes/suppliers.js';
-import stockRoutes from './routes/stock.js';
-import chatRoutes from './routes/chat.js';
-import paymentRoutes from './routes/payments.js';
-import adminRoutes from './routes/admin.js';
-import posRoutes from './routes/pos.js';
-import prescriptionRoutes from './routes/prescriptions.js';
-import notificationRoutes from './routes/notifications.js';
+// Les routes seront importées dynamiquement
 
 const app = express();
 const server = createServer(app);
@@ -50,7 +36,7 @@ const io = new Server(server, {
 });
 
 // Rendre io accessible globalement
-setIO(io);
+// setIO(io);
 
 // Configuration de base
 const PORT = process.env.PORT || 5001;
@@ -141,21 +127,18 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/suppliers', supplierRoutes);
-app.use('/api/stock', stockRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/pos', posRoutes);
-app.use('/api/prescriptions', prescriptionRoutes);
-app.use('/api/notifications', notificationRoutes);
+// API Routes - chargement dynamique
+const loadRoutes = async () => {
+  try {
+    const { default: adminRoutes } = await import('./routes/admin.js');
+    app.use('/api/admin', adminRoutes);
+    
+    // Autres routes à ajouter au besoin
+    console.log('✅ Routes chargées');
+  } catch (error) {
+    console.error('❌ Erreur lors du chargement des routes:', error);
+  }
+};
 
 // Route 404
 app.use(notFoundHandler);
@@ -180,10 +163,11 @@ process.on('unhandledRejection', (reason, promise) => exitHandler(reason, `Unhan
 process.on('uncaughtException', (error) => exitHandler(error, 'Uncaught Exception'));
 
 // Socket.IO handler
-socketHandler(io);
+// socketHandler(io);
 
 // Démarrage du serveur
 const startServer = async () => {
+  await loadRoutes();
   const useRedisAdapter = process.env.USE_REDIS === 'true';
   try {
     // Connexion à MongoDB

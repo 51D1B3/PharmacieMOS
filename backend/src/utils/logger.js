@@ -1,6 +1,6 @@
-const winston = require('winston');
-const path = require('path');
-const fs = require('fs');
+import winston from 'winston';
+import path from 'path';
+import fs from 'fs';
 
 // Créer le dossier logs s'il n'existe pas
 const logDir = 'logs';
@@ -102,4 +102,4 @@ logger.success = helper.success;
 logger.security = helper.security;
 logger.audit = helper.audit;
 
-module.exports = logger;
+export default logger;

@@ -1,13 +1,13 @@
-const User = require('../models/User');
-const { AppError, asyncHandler } = require('../middleware/errorHandler');
-const logger = require('../utils/logger');
+import User from '../models/User.js';
+import { AppError, asyncHandler } from '../middleware/errorHandler.js';
+import logger from '../utils/logger.js';
 
 /**
  * @desc    Créer un nouvel utilisateur administrateur
  * @route   POST /api/admin/users
  * @access  Private (Admin)
  */
-exports.createAdmin = asyncHandler(async (req, res, next) => {
+export const createAdmin = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   let { nom, prenom, sexe } = req.body;
 
