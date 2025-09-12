@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Package, AlertTriangle, Eye, Edit, Trash2, Plus, Filter } from 'lucide-react';
 import apiService from '../services/api.jsx';
 import { formatPrice } from '../services/priceFormatter';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const AdminProductsManager = () => {
   const [products, setProducts] = useState([]);
@@ -219,7 +220,7 @@ const AdminProductsManager = () => {
                           {product.image ? (
                             <img
                               className="h-12 w-12 rounded-lg object-cover"
-                              src={product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_URL || ''}${product.image}`}
+                              src={getProductImageUrl(product.image, product.name)}
                               alt={product.name}
                               onError={(e) => {
                                 e.target.src = `https://via.placeholder.com/100x100.png/f3f4f6/9ca3af?text=${encodeURIComponent(product.name?.substring(0, 2) || 'PR')}`;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ShoppingCart, Eye, Star, AlertTriangle } from 'lucide-react';
 import { formatPrice, calculateDiscountPercentage } from '../services/priceFormatter';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const ProductCard = ({ product, onAddToCart }) => {
   const stockOnHand = product.stock?.onHand || 0;
@@ -8,11 +9,8 @@ const ProductCard = ({ product, onAddToCart }) => {
   const isOutOfStock = stockOnHand === 0;
   const isPrescriptionRequired = product.isPrescriptionRequired;
 
-  // Construire l'URL de l'image
-  const imageUrl = product.image && product.image !== '/uploads/products/default.png'
-    ? `${import.meta.env.VITE_API_URL}${product.image}`
-    // URL d'un placeholder si aucune image n'est disponible
-    : `https://via.placeholder.com/400x400.png/f3f4f6/9ca3af?text=${encodeURIComponent(product.nom || product.name || 'Produit')}`;
+  // Construire l'URL de l'image (Cloudinary ou locale)
+  const imageUrl = getProductImageUrl(product.image, product.nom || product.name || 'Produit');
 
   // Gestion du prix
   const finalPrice = product.discountedPrice ?? product.priceTTC ?? product.prix;

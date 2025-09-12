@@ -1,9 +1,17 @@
-const Product = require('../models/Product');
-const Category = require('../models/Category');
-const Supplier = require('../models/Supplier');
-const StockMovement = require('../models/StockMovement');
-const { AppError, asyncHandler } = require('../middleware/errorHandler');
-const logger = require('../utils/logger');
+const Product = (await import('../models/Product.js')).default;
+const Category = require('../models/Category.js');
+const Supplier = require('../models/Supplier.js');
+const StockMovement = require('../models/StockMovement.js');
+
+class AppError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+const logger = { info: console.log, error: console.error };
 
 // @desc    Récupérer tous les produits avec pagination et filtres
 // @route   GET /api/products
@@ -288,7 +296,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
         throw new AppError('Produit non trouvé', 404);
     }
 
-    const Order = require('../models/Order');
+    const { default: Order } = await import('../models/Order.js');
     const activeOrders = await Order.countDocuments({
         'items.product': product._id,
         status: { $in: ['pending', 'confirmed', 'preparing'] }
@@ -527,7 +535,7 @@ const getLowStockProducts = asyncHandler(async (req, res) => {
     });
 });
 
-module.exports = {
+export {
     getProducts,
     getProduct,
     getProductBySku,

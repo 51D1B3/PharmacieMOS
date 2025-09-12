@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const slugify = require('slugify');
+import mongoose from 'mongoose';
+import slugify from 'slugify';
 
 const productSchema = new mongoose.Schema({
   // Informations de base
@@ -176,7 +176,7 @@ const productSchema = new mongoose.Schema({
   },
   prescriptionType: {
     type: String,
-    enum: ['libre', 'ordonnance_simple', 'ordonnance_restreinte', 'stupéfiant'],
+    enum: ['libre', 'ordonnance_simple', 'ordonnance_restreinte', 'stupefiant'],
     default: 'libre'
   },
   isReimbursed: {
@@ -514,4 +514,6 @@ productSchema.statics.search = function(query, options = {}) {
     .populate('supplierId', 'name email telephone');
 };
 
-module.exports = mongoose.model('Product', productSchema);
+const Product = mongoose.model('Product', productSchema);
+
+export default Product;

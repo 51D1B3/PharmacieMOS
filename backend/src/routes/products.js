@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const {
+import {
     getProducts,
     getProduct,
     getProductBySku,
@@ -14,11 +14,11 @@ const {
     getOutOfStockProducts,
     getExpiringSoonProducts,
     getLowStockProducts
-} = require('../controllers/productController');
+} from '../controllers/productController.js';
 
-const { authGuard, requireRole, requirePermission } = require('../middleware/authGuard');
-const { validateBody, validateQuery } = require('../middleware/errorHandler');
-const upload = require('../middleware/upload');
+const { authGuard, requireRole, requirePermission } = require('../middleware/authGuard.js');
+const { validateBody, validateQuery } = require('../middleware/errorHandler.js');
+const upload = (await import('../middleware/uploadProduct.js')).default;
 const Joi = require('joi');
 
 // Schémas de validation
@@ -155,4 +155,4 @@ router.get('/alerts/low-stock',
     getLowStockProducts
 );
 
-module.exports = router;
+export default router;

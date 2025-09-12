@@ -3,6 +3,7 @@ import { ShoppingCart, Package, Heart, Eye, Star, AlertTriangle, Filter, Chevron
 import { useCart } from '../contexts/CartContext.jsx';
 import apiService from '../services/api';
 import { formatPrice, calculateDiscountPercentage } from '../services/priceFormatter';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const ProductsGrid = () => {
   const { addToCart } = useCart();
@@ -291,7 +292,7 @@ const ProductsGrid = () => {
               <div className="relative h-48 bg-gray-100 dark:bg-gray-900 overflow-hidden">
                 {product.image ? (
                   <img
-                    src={product.image.startsWith('http') ? product.image : `${import.meta.env.VITE_API_URL || ''}${product.image}`}
+                    src={getProductImageUrl(product.image, product.name || product.nom)}
                     alt={product.name || product.nom}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {

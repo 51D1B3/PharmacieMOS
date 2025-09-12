@@ -1,6 +1,7 @@
 {
   "name": "pharmacie-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Backend API pour la plateforme de gestion de pharmacie",
   "main": "src/server.js",
   "scripts": {
@@ -12,7 +13,8 @@
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
     "seed": "node src/scripts/seed.js",
-    "migrate": "node src/scripts/migrate.js"
+    "migrate": "node src/scripts/migrate.js",
+    "migrate:images": "node scripts/migrateImages.js"
   },
   "keywords": [
     "pharmacy",
@@ -30,11 +32,12 @@
     "aws-sdk": "^2.1490.0",
     "bcryptjs": "^2.4.3",
     "bullmq": "^5.0.0",
+    "cloudinary": "^1.41.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "csv-parser": "^3.0.0",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.6.1",
     "exceljs": "^4.4.0",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
@@ -45,9 +48,10 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "mongoose": "^8.0.3",
+    "mongoose": "^8.18.1",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "multer-storage-cloudinary": "^4.0.0",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.7",
     "pdfkit": "^0.14.0",
