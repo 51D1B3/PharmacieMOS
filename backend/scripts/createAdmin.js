@@ -1,6 +1,13 @@
-const mongoose = require('mongoose');
-const User = require('../src/models/User');
-require('dotenv').config({ path: './backend/.env' });
+import mongoose from 'mongoose';
+import User from '../src/models/User.js';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const dbURI = process.env.MONGODB_URI;
 

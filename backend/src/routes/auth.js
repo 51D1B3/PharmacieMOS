@@ -1,6 +1,6 @@
-import express from 'express';
-import Joi from 'joi';
-import {
+const express = require('express');
+const Joi = require('joi');
+const {
   register,
   login,
   refreshToken,
@@ -12,10 +12,9 @@ import {
   resetPassword,
   verifyEmail,
   resendVerification
-} from '../controllers/authController.js';
-import { authGuard, refreshTokenGuard } from '../middleware/authGuard.js';
-import { validateBody } from '../middleware/errorHandler.js';
-import uploadProfile from '../middleware/uploadProfile.js';
+} = require('../controllers/authController.js');
+const { authGuard, refreshTokenGuard } = require('../middleware/authGuard.js');
+const { validateBody } = require('../middleware/errorHandler.js');
 
 const router = express.Router();
 
@@ -132,9 +131,59 @@ const resetPasswordSchema = Joi.object({
   })
 });
 
+// Route de test
+router.get('/test', (req, res) => {
+  res.json({ message: 'Routes auth fonctionnent!' });
+});
+
+// Route temporaire pour créer le premier admin (à supprimer en production)
+router.post('/create-first-admin', async (req, res) => {
+  try {
+    const { nom, prenom, email, password, sexe } = req.body;
+
+    // Vérifier si un admin existe déjà
+    const existingAdmin = await User.findOne({ role: 'admin' });
+    if (existingAdmin) {
+      return res.status(400).json({
+        success: false,
+        message: 'Un administrateur existe déjà'
+      });
+    }
+
+    // Créer l'admin
+    const admin = await User.create({
+      nom,
+      prenom,
+      email,
+      password,
+      sexe: sexe || 'Autre',
+      role: 'admin',
+      isEmailVerified: true
+    });
+
+    console.log('Premier admin créé:', admin.email);
+
+    res.status(201).json({
+      success: true,
+      message: 'Administrateur créé avec succès',
+      data: {
+        email: admin.email,
+        role: admin.role
+      }
+    });
+  } catch (error) {
+    console.error('Erreur création admin:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création de l\'administrateur'
+    });
+  }
+});
+
 // Routes publiques
-router.post('/register', register);
-router.post('/login', login);
+router.post('/register', validateBody(registerSchema), register);
+router.post('/register-admin', validateBody(registerSchema), register);
+router.post('/login', validateBody(loginSchema), login);
 router.post('/refresh', validateBody(refreshTokenSchema), refreshTokenGuard, refreshToken);
 router.post('/forgot-password', validateBody(forgotPasswordSchema), forgotPassword);
 router.put('/reset-password/:token', validateBody(resetPasswordSchema), resetPassword);
@@ -147,4 +196,4 @@ router.put('/me', authGuard, validateBody(updateMeSchema), updateMe);
 router.put('/change-password', authGuard, validateBody(changePasswordSchema), changePassword);
 router.post('/resend-verification', authGuard, resendVerification);
 
-export default router;
+module.exports = router;

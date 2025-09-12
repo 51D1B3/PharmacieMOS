@@ -1,8 +1,8 @@
-import express from 'express';
-import { authGuard, requireRole } from '../middleware/authGuard.js';
-import { createAdmin } from '../controllers/adminController.js';
-import { validateBody } from '../middleware/errorHandler.js';
-import Joi from 'joi';
+const express = require('express');
+const { authGuard, requireRole } = require('../middleware/authGuard.js');
+const { createAdmin } = require('../controllers/adminController.js');
+const { validateBody } = require('../middleware/errorHandler.js');
+const Joi = require('joi');
 
 const router = express.Router();
 
@@ -26,4 +26,4 @@ router.post(
     createAdmin
 );
 
-export default router;
+module.exports = router;

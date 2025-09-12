@@ -1,48 +1,45 @@
-import path from 'path';
-import dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(path.dirname(''), '../.env') });
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import Redis from 'redis';
-import { createAdapter } from '@socket.io/redis-adapter';
-import cookieParser from 'cookie-parser';
+const path = require('path');
+const dotenv = require('dotenv');
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const Redis = require('redis');
+const { createAdapter } = require('@socket.io/redis-adapter');
+const cookieParser = require('cookie-parser');
 
-// Variables pour les modules
-let logger = { info: console.log, error: console.error };
-let connectDB = async () => console.log('DB non connectée');
-let errorHandler = (err, req, res, next) => res.status(500).json({error: err.message});
-let notFoundHandler = (req, res) => res.status(404).json({error: 'Route non trouvée'});
+const logger = require('./utils/logger.js');
+const connectDB = require('./config/database.js');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler.js');
 
-// Routes importées dynamiquement
+const authRoutes = require('./routes/auth.js');
+const adminRoutes = require('./routes/admin.js');
+const prescriptionRoutes = require('./routes/prescriptions.js');
+const categoryRoutes = require('./routes/categories.js');
+const productRoutes = require('./routes/products.js');
+const orderRoutes = require('./routes/orders.js');
+const supplierRoutes = require('./routes/suppliers.js');
+const userRoutes = require('./routes/users.js');
+const cartRoutes = require('./routes/cart.js');
+const chatRoutes = require('./routes/chat.js');
+const notificationRoutes = require('./routes/notifications.js');
+const paymentRoutes = require('./routes/payments.js');
+const posRoutes = require('./routes/pos.js');
+const stockRoutes = require('./routes/stock.js');
 
 const app = express();
 const server = createServer(app);
 
-// Configuration Socket.IO avec Redis
-const io = new Server(server, {
-  cors: {
-    origin: [process.env.SOCKET_CORS_ORIGIN || "http://localhost:3000", "http://localhost:3001"],
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-});
-
-// Rendre io accessible globalement
-// setIO(io);
-
-// Configuration de base
-const PORT = 5001; // Port original
+const PORT = process.env.PORT || 5002;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// Middleware de sécurité
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -55,27 +52,20 @@ app.use(helmet({
     }
   }
 }));
-
-// Compression
 app.use(compression());
-
-// Cookies
 app.use(cookieParser());
 
-// Rate limiting
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limite chaque IP à 100 requêtes par fenêtre
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
   message: {
     error: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard.'
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
-
 app.use('/api/', limiter);
 
-// Logging
 if (NODE_ENV === 'development') {
   app.use(morgan('dev'));
 } else {
@@ -86,17 +76,13 @@ if (NODE_ENV === 'development') {
   }));
 }
 
-// CORS
-
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'http://localhost:3001',
-  'http://localhost:5173' // Ajout pour Vite
+  'http://localhost:5173'
 ];
-
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
@@ -109,15 +95,11 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Routes statiques pour les uploads
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
-// Health check
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
@@ -128,30 +110,27 @@ app.get('/health', (req, res) => {
   });
 });
 
-const loadRoutes = async () => {
-  try {
-    const { default: prescriptionRoutes } = await import('./routes/prescriptions.js');
-    app.use('/api/prescriptions', prescriptionRoutes);
-    
-    const { default: authRoutes } = await import('./routes/auth.js');
-    app.use('/api/auth', authRoutes);
-    
-    console.log('✅ Routes chargées');
-  } catch (error) {
-    console.log('Routes non chargées:', error.message);
-  }
-};
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/suppliers', supplierRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/pos', posRoutes);
+app.use('/api/stock', stockRoutes);
 
-// Route 404
 app.use(notFoundHandler);
-
-// Error handling middleware
 app.use(errorHandler);
 
 // Gestion des erreurs non capturées
 const exitHandler = (error, origin) => {
   const message = origin ? `${origin}:` : 'Error:';
-  // Utilise console.error pour garantir que le message s'affiche même si le logger est défaillant
   console.error(message, error);
   if (server && server.listening) {
     server.close(() => process.exit(1));
@@ -161,60 +140,23 @@ const exitHandler = (error, origin) => {
 };
 
 process.on('unhandledRejection', (reason, promise) => exitHandler(reason, `Unhandled Rejection at: ${promise}`));
-
 process.on('uncaughtException', (error) => exitHandler(error, 'Uncaught Exception'));
 
-// Socket.IO handler
-// socketHandler(io);
-
 const startServer = async () => {
-  // Chargement des modules
-  try {
-    const loggerModule = await import('./utils/logger.js');
-    logger = loggerModule.default;
-    const dbModule = await import('./config/database.js');
-    connectDB = dbModule.default;
-    const errorModule = await import('./middleware/errorHandler.js');
-    errorHandler = errorModule.errorHandler;
-    notFoundHandler = errorModule.notFoundHandler;
-  } catch (err) {
-    console.log('Modules optionnels:', err.message);
-  }
-  
   try {
     await connectDB();
     
-    await loadRoutes();
-    
-    server.listen(PORT, () => {
+    server.listen(PORT, '127.0.0.1', () => {
       console.log(`🚀 Serveur démarré sur le port ${PORT}`);
       console.log(`🔗 API: http://localhost:${PORT}`);
     });
     
   } catch (error) {
-    // Utiliser console.error pour les erreurs de démarrage critiques car le logger pourrait ne pas être initialisé
     console.error('❌ Erreur lors du démarrage du serveur:', error);
     process.exit(1);
   }
 };
 
-// Gestion de l'arrêt gracieux
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM reçu, arrêt gracieux...');
-  server.close(() => {
-    logger.info('Processus terminé');
-    process.exit(0);
-  });
-});
-
-process.on('SIGINT', () => {
-  logger.info('SIGINT reçu, arrêt gracieux...');
-  server.close(() => {
-    logger.info('Processus terminé');
-    process.exit(0);
-  });
-});
-
 startServer();
 
-export { app, server, io };
+module.exports = { app, server };

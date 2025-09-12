@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import logger from '../utils/logger.js';
+const mongoose = require('mongoose');
+const logger = require('../utils/logger.js');
 
 const connectDB = async () => {
   try {
@@ -7,8 +7,8 @@ const connectDB = async () => {
     const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://51D1B3:Sidibe2004@cluster0.i2yw1cl.mongodb.net/PhacieDB';
     
     const conn = await mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useNewUrlParser: true, // Déprécié
+    // useUnifiedTopology: true, // Déprécié
     });
 
     logger.info(`✅ MongoDB connecté: ${conn.connection.host}`);
@@ -39,4 +39,4 @@ const connectDB = async () => {
   }
 };
 
-export default connectDB;
+module.exports = connectDB;

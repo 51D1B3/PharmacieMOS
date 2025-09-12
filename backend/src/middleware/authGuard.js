@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
-import logger from '../utils/logger.js';
+const jwt = require('jsonwebtoken');
+const User = require('../models/User.js');
+const logger = require('../utils/logger.js');
 
 const authGuard = async (req, res, next) => {
   try {
@@ -24,7 +24,7 @@ const authGuard = async (req, res, next) => {
     }
     
     // Vérifier et décoder le token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'votre_super_secret_pour_access_token_a_changer');
     
     // Un seul modèle User pour tous les rôles
     const { id } = decoded;
@@ -106,7 +106,7 @@ const optionalAuth = async (req, res, next) => {
     }
     
     if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'votre_super_secret_pour_access_token_a_changer');
       const { id } = decoded;
       const user = await User.findById(id).select('+permissions');
       
@@ -120,7 +120,7 @@ const optionalAuth = async (req, res, next) => {
     
     next();
   } catch (error) {
-    // En cas d'erreur, continuer sans authentification
+    // En cas d\'erreur, continuer sans authentification
     next();
   }
 };
@@ -139,7 +139,7 @@ const refreshTokenGuard = async (req, res, next) => {
     }
     
     // Vérifier le refresh token
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || 'votre_super_secret_pour_refresh_token_a_changer');
     
     // Vérifier si le refresh token existe dans la base de données
     const user = await User.findByRefreshToken(refreshToken);
@@ -152,7 +152,7 @@ const refreshTokenGuard = async (req, res, next) => {
       });
     }
     
-    // Vérifier si l'utilisateur est actif
+    // Vérifier si l\'utilisateur est actif
     if (!user.isActive) {
       return res.status(401).json({
         success: false,
@@ -245,7 +245,7 @@ const requireRole = (roles) => {
   };
 };
 
-// Middleware pour vérifier la propriété (l'utilisateur peut accéder à ses propres ressources)
+// Middleware pour vérifier la propriété (l\'utilisateur peut accéder à ses propres ressources)
 const requireOwnership = (resourceModel, resourceIdField = 'id') => {
   return async (req, res, next) => {
     try {
@@ -277,7 +277,7 @@ const requireOwnership = (resourceModel, resourceIdField = 'id') => {
         });
       }
       
-      // Vérifier si l'utilisateur est propriétaire ou admin
+      // Vérifier si l\'utilisateur est propriétaire ou admin
       if (resource.user && resource.user.toString() !== req.userId.toString() && req.userRole !== 'admin') {
         console.log('Tentative d\'accès à une ressource non autorisée pour:', req.user.email);
         
@@ -302,7 +302,7 @@ const requireOwnership = (resourceModel, resourceIdField = 'id') => {
   };
 };
 
-export {
+module.exports = {
   authGuard,
   optionalAuth,
   refreshTokenGuard,

@@ -1,11 +1,11 @@
-import express from 'express';
-import { authGuard, requireRole } from '../middleware/authGuard.js';
-import { uploadPrescription } from '../config/cloudinary.js';
-import { 
+const express = require('express');
+const { authGuard, requireRole } = require('../middleware/authGuard.js');
+const { uploadPrescription } = require('../config/cloudinary.js');
+const { 
   createPrescription, 
   getAllPrescriptions, 
   updatePrescriptionStatus 
-} from '../controllers/prescriptionController.js';
+} = require('../controllers/prescriptionController.js');
 
 const router = express.Router();
 
@@ -18,4 +18,4 @@ router.get('/', authGuard, requireRole(['admin']), getAllPrescriptions);
 // Admin met à jour le statut
 router.put('/:id/status', authGuard, requireRole(['admin']), updatePrescriptionStatus);
 
-export default router;
+module.exports = router;

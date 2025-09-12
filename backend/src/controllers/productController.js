@@ -1,7 +1,8 @@
-const Product = (await import('../models/Product.js')).default;
+const Product = require('../models/Product.js');
 const Category = require('../models/Category.js');
 const Supplier = require('../models/Supplier.js');
 const StockMovement = require('../models/StockMovement.js');
+const Order = require('../models/Order.js');
 
 class AppError extends Error {
   constructor(message, statusCode) {
@@ -296,7 +297,6 @@ const deleteProduct = asyncHandler(async (req, res) => {
         throw new AppError('Produit non trouvé', 404);
     }
 
-    const { default: Order } = await import('../models/Order.js');
     const activeOrders = await Order.countDocuments({
         'items.product': product._id,
         status: { $in: ['pending', 'confirmed', 'preparing'] }
@@ -535,7 +535,7 @@ const getLowStockProducts = asyncHandler(async (req, res) => {
     });
 });
 
-export {
+module.exports = {
     getProducts,
     getProduct,
     getProductBySku,

@@ -1,13 +1,13 @@
-import User from '../models/User.js';
-import { AppError, asyncHandler } from '../middleware/errorHandler.js';
-import logger from '../utils/logger.js';
+const User = require('../models/User.js');
+const { AppError, asyncHandler } = require('../middleware/errorHandler.js');
+const logger = require('../utils/logger.js');
 
 /**
  * @desc    Créer un nouvel utilisateur administrateur
  * @route   POST /api/admin/users
  * @access  Private (Admin)
  */
-export const createAdmin = asyncHandler(async (req, res, next) => {
+const createAdmin = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   let { nom, prenom, sexe } = req.body;
 
@@ -50,3 +50,5 @@ export const createAdmin = asyncHandler(async (req, res, next) => {
     data: adminUser
   });
 });
+
+module.exports = { createAdmin };

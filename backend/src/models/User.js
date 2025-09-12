@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
   // Informations personnelles
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Email invalide']
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w{2,3})+$/, 'Email invalide']
   },
   password: {
     type: String,
@@ -126,12 +126,16 @@ userSchema.virtual('isLocked').get(function() {
 userSchema.pre('save', async function(next) {
   // Ne hasher que si le mot de passe a été modifié
   if (!this.isModified('password')) return next();
-  
+
+  console.log('Hashing password for user:', this.email);
+
   try {
     const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_ROUNDS) || 10);
     this.password = await bcrypt.hash(this.password, salt);
+    console.log('Password hashed successfully');
     next();
   } catch (error) {
+    console.error('Error hashing password:', error);
     next(error);
   }
 });
@@ -209,10 +213,10 @@ userSchema.statics.findByEmail = function(email) {
 };
 
 userSchema.statics.findByRefreshToken = function(token) {
-  return this.findOne({ 
+  return this.findOne({
     'refreshTokens.token': token,
     'refreshTokens.expiresAt': { $gt: new Date() }
   });
 };
 
-export default mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);

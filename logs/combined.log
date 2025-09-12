@@ -30,3 +30,4 @@
 {"level":"info","message":"📱 Mode: development","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
 {"level":"info","message":"🔗 API: http://localhost:5000","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
 {"level":"info","message":"💬 Socket.IO: ws://localhost:5000","service":"pharmacie-api","timestamp":"2025-08-28 23:43:14"}
+{"level":"info","message":"✅ MongoDB connecté: ac-727tjjg-shard-00-02.i2yw1cl.mongodb.net","service":"pharmacie-api","timestamp":"2025-09-12 17:27:17"}

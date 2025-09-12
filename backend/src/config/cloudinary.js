@@ -1,6 +1,6 @@
-import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import multer from 'multer';
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const multer = require('multer');
 
 // Configuration Cloudinary
 cloudinary.config({
@@ -19,9 +19,9 @@ const prescriptionStorage = new CloudinaryStorage({
   },
 });
 
-export const uploadPrescription = multer({ 
+const uploadPrescription = multer({ 
   storage: prescriptionStorage,
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB
 });
 
-export default cloudinary;
+module.exports = { cloudinary, uploadPrescription };

@@ -19,14 +19,17 @@ const LoginForm = () => {
 
     try {
       const user = await login(email, password);
+      console.log('Utilisateur connecté:', user);
       // Redirect based on user role
-      if (user.role === 'admin' || user.role === 'pharmacist') {
+      if (user.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Une erreur est survenue lors de la connexion');
+      console.error('Erreur de connexion:', err);
+      const errorMessage = err.response?.data?.message || err.message || 'Une erreur est survenue lors de la connexion';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

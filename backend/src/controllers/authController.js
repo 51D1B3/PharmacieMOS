@@ -1,7 +1,6 @@
-const User = require('../models/User');
-const { AppError } = require('../middleware/errorHandler');
-const { asyncHandler } = require('../middleware/errorHandler');
-const logger = require('../utils/logger');
+const User = require('../models/User.js');
+const { AppError, asyncHandler } = require('../middleware/errorHandler.js');
+const logger = require('../utils/logger.js');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
@@ -60,7 +59,7 @@ const sendTokenResponse = async (req, res, user, statusCode) => {
 // @route   POST /api/auth/register
 // @access  Public
 const register = asyncHandler(async (req, res, next) => {
-  const { nom, prenom, email, password, sexe, telephone } = req.body;
+  const { nom, prenom, email, password, sexe, telephone, role } = req.body;
 
   // Validation basique
   if (!nom || !prenom || !email || !password) {
@@ -87,7 +86,7 @@ const register = asyncHandler(async (req, res, next) => {
     password,
     sexe: sexe || 'Autre',
     telephone,
-    role: 'client',
+    role: role || 'client',
     isEmailVerified: true // Simplifier pour les tests
   });
 
@@ -101,16 +100,22 @@ const register = asyncHandler(async (req, res, next) => {
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
+  console.log('Tentative de connexion pour:', email);
+
   // Vérifier que l'email et le mot de passe sont fournis
   if (!email || !password) {
+    console.log('Email ou mot de passe manquant');
     return next(new AppError('Email et mot de passe requis', 400, 'MISSING_CREDENTIALS'));
   }
 
   // Vérifier si l'utilisateur existe
   const user = await User.findByEmail(email).select('+password');
   if (!user) {
+    console.log('Utilisateur non trouvé pour email:', email);
     return next(new AppError('Email ou mot de passe incorrect', 401, 'INVALID_CREDENTIALS'));
   }
+
+  console.log('Utilisateur trouvé:', user.email, 'Rôle:', user.role);
 
   // Vérifier si le compte est actif
   if (!user.isActive) {
@@ -125,13 +130,14 @@ const login = asyncHandler(async (req, res, next) => {
   // Vérifier le mot de passe
   const isPasswordValid = await user.comparePassword(password);
   if (!isPasswordValid) {
+    console.log('Mot de passe incorrect pour:', email);
     // Incrémenter les tentatives de connexion
     await user.incrementLoginAttempts();
-    
-    console.log('Tentative de connexion échouée pour:', email);
 
     return next(new AppError('Email ou mot de passe incorrect', 401, 'INVALID_CREDENTIALS'));
   }
+
+  console.log('Mot de passe correct pour:', email);
 
   // Réinitialiser les tentatives de connexion
   await user.resetLoginAttempts();
@@ -142,7 +148,7 @@ const login = asyncHandler(async (req, res, next) => {
   await user.save();
 
   // Logger la connexion
-  console.log('Connexion réussie pour:', user.email);
+  console.log('Connexion réussie pour:', user.email, 'Rôle:', user.role);
 
   // Envoyer la réponse
   await sendTokenResponse(req, res, user, 200);
