@@ -15,13 +15,13 @@ import { createAdapter } from '@socket.io/redis-adapter';
 import cookieParser from 'cookie-parser';
 
 
-import logger from './utils/logger.js';
-import connectDB from './config/database.js';
-// import socketHandler from './socket/socketHandler.js';
-// import { setIO } from './socket/io.js';
-import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+// Variables pour les modules
+let logger = { info: console.log, error: console.error };
+let connectDB = async () => console.log('DB non connectée');
+let errorHandler = (err, req, res, next) => res.status(500).json({error: err.message});
+let notFoundHandler = (req, res) => res.status(404).json({error: 'Route non trouvée'});
 
-// Les routes seront importées dynamiquement
+// Routes importées dynamiquement
 
 const app = express();
 const server = createServer(app);
@@ -39,7 +39,7 @@ const io = new Server(server, {
 // setIO(io);
 
 // Configuration de base
-const PORT = process.env.PORT || 5001;
+const PORT = 5001; // Port original
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Middleware de sécurité
@@ -114,6 +114,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes statiques pour les uploads
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Health check
@@ -127,16 +128,17 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API Routes - chargement dynamique
 const loadRoutes = async () => {
   try {
-    const { default: adminRoutes } = await import('./routes/admin.js');
-    app.use('/api/admin', adminRoutes);
+    const { default: prescriptionRoutes } = await import('./routes/prescriptions.js');
+    app.use('/api/prescriptions', prescriptionRoutes);
     
-    // Autres routes à ajouter au besoin
+    const { default: authRoutes } = await import('./routes/auth.js');
+    app.use('/api/auth', authRoutes);
+    
     console.log('✅ Routes chargées');
   } catch (error) {
-    console.error('❌ Erreur lors du chargement des routes:', error);
+    console.log('Routes non chargées:', error.message);
   }
 };
 
@@ -165,38 +167,28 @@ process.on('uncaughtException', (error) => exitHandler(error, 'Uncaught Exceptio
 // Socket.IO handler
 // socketHandler(io);
 
-// Démarrage du serveur
 const startServer = async () => {
-  await loadRoutes();
-  const useRedisAdapter = process.env.USE_REDIS === 'true';
+  // Chargement des modules
   try {
-    // Connexion à MongoDB
+    const loggerModule = await import('./utils/logger.js');
+    logger = loggerModule.default;
+    const dbModule = await import('./config/database.js');
+    connectDB = dbModule.default;
+    const errorModule = await import('./middleware/errorHandler.js');
+    errorHandler = errorModule.errorHandler;
+    notFoundHandler = errorModule.notFoundHandler;
+  } catch (err) {
+    console.log('Modules optionnels:', err.message);
+  }
+  
+  try {
     await connectDB();
     
-    // Connexion Redis si activé
-    if (useRedisAdapter) {
-      const pubClient = Redis.createClient({
-        url: process.env.REDIS_URL || 'redis://localhost:6379'
-      });
-      const subClient = pubClient.duplicate();
-
-      pubClient.on('error', (err) => logger.error('Redis PubClient Error:', err));
-      subClient.on('error', (err) => logger.error('Redis SubClient Error:', err));
-
-      logger.info('⏳ Connexion à Redis...');
-      await Promise.all([pubClient.connect(), subClient.connect()]);
-      logger.info('✅ Redis connecté.');
-      io.adapter(createAdapter(pubClient, subClient));
-      logger.info('✅ Adapter Socket.IO Redis activé');
-    } else {
-      logger.info('ℹ️ Redis désactivé (USE_REDIS!=true), Socket.IO utilise l\'adapter mémoire');
-    }
+    await loadRoutes();
     
     server.listen(PORT, () => {
-      logger.info(`🚀 Serveur démarré sur le port ${PORT}`);
-      logger.info(`📱 Mode: ${NODE_ENV}`);
-      logger.info(`🔗 API: http://localhost:${PORT}`);
-      logger.info(`💬 Socket.IO: ws://localhost:${PORT}`);
+      console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+      console.log(`🔗 API: http://localhost:${PORT}`);
     });
     
   } catch (error) {
@@ -225,4 +217,4 @@ process.on('SIGINT', () => {
 
 startServer();
 
-module.exports = { app, server, io };
+export { app, server, io };

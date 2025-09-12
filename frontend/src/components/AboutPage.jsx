@@ -26,13 +26,11 @@ const AboutPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-white rounded-full p-2 shadow-lg">
-                <img 
-                  src="/images/mon_logo.png" 
-                  alt="PharmaMOS Logo" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              <img
+                src="/images/mon_logo.png"
+                alt="PharmaMOS Logo"
+                className="h-14 w-14 rounded-full object-cover border-2 border-primary-500 shadow"
+              />
               <span className="text-2xl font-bold text-white">PharmaMOS</span>
             </div>
             <Link
@@ -47,12 +45,23 @@ const AboutPage = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 text-center">
-        <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-5xl font-bold text-white mb-6">
+      <section className="relative py-32 text-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src="https://i.postimg.cc/Kv23r1Y2/Generated-Image-Landing.png"
+            alt="PharmaMOS Background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/60"></div>
+        </div>
+        
+        {/* Content */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4">
+          <h1 className="text-6xl md:text-7xl font-bold text-white mb-8">
             À Propos de <span className="text-primary-400">PharmaMOS</span>
           </h1>
-          <p className="text-xl text-gray-300 leading-relaxed">
+          <p className="text-2xl text-gray-200 leading-relaxed">
             Votre pharmacie moderne, proche de vous et de vos besoins
           </p>
         </div>

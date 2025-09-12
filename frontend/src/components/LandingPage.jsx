@@ -41,22 +41,32 @@ const LandingPage = () => {
     "Service client 24h/7j disponible pour vous"
   ];
 
-  // Images pour le carousel (URLs d'exemple - vous pouvez les remplacer)
+  // Images pour le carousel
   const carouselImages = [
     {
-      url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      title: "Pharmacie Moderne",
+      url: "https://i.postimg.cc/W19V3Hyy/pharmacielogo.jpg",
+      title: "Pharmacie Moderne Logo",
       description: "Technologie de pointe au service de votre santé"
     },
     {
-      url: "https://www.istockphoto.com/photo/green-pharmacy-electric-sign-outside-gm1728298369-541523065?utm_source=pexels&utm_medium=affiliate&utm_campaign=sponsored_photo&utm_content=srp_inline_media&utm_term=logo%20pharmacie", 
+      url: "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80", 
       title: "Médicaments de Qualité",
       description: "Produits pharmaceutiques certifiés et contrôlés"
     },
     {
-      url: "https://www.istockphoto.com/photo/green-cross-led-sign-gm1391198473-447897721",
-      title: "Consultation Expert",
+      url: "https://i.postimg.cc/05GLj4MC/Best-Pharmacy-Landing.jpg",
+      title: "Experts pharmaciens",
       description: "Conseils professionnels de pharmaciens qualifiés"
+    },
+    {
+      url: "https://i.postimg.cc/c15fRxn1/pngtree-pharmacy-Landing.png",
+      title: "Medicaments",
+      description: "Conseils professionnels de pharmaciens"
+    },
+    {
+      url: "https://i.postimg.cc/Bn5gBW3h/Smiling-pharmacist-Landing.jpg",
+      title: "Pharmacien moderne",
+      description: "Conseils d'un harmaciens qualifiés"
     }
   ];
 
@@ -118,10 +128,10 @@ const LandingPage = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <img 
-                src="/images/mon_logo.png" 
-                alt="PharmaMOS Logo" 
-                className="h-10 w-10 object-contain"
+              <img
+                src="/images/mon_logo.png"
+                alt="PharmaMOS Logo"
+                className="h-14 w-14 rounded-full object-cover border-2 border-primary-500 shadow"
               />
               <span className="text-2xl font-bold transition-colors duration-300 text-white">PharmaMOS</span>
             </div>

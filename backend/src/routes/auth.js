@@ -1,6 +1,6 @@
-const express = require('express');
-const Joi = require('joi');
-const {
+import express from 'express';
+import Joi from 'joi';
+import {
   register,
   login,
   refreshToken,
@@ -12,10 +12,10 @@ const {
   resetPassword,
   verifyEmail,
   resendVerification
-} = require('../controllers/authController');
-const { authGuard, refreshTokenGuard } = require('../middleware/authGuard');
-const { validateBody } = require('../middleware/errorHandler');
-const uploadProfile = require('../middleware/uploadProfile'); // Assurez-vous que ce chemin est correct
+} from '../controllers/authController.js';
+import { authGuard, refreshTokenGuard } from '../middleware/authGuard.js';
+import { validateBody } from '../middleware/errorHandler.js';
+import uploadProfile from '../middleware/uploadProfile.js';
 
 const router = express.Router();
 
@@ -147,4 +147,4 @@ router.put('/me', authGuard, validateBody(updateMeSchema), updateMe);
 router.put('/change-password', authGuard, validateBody(changePasswordSchema), changePassword);
 router.post('/resend-verification', authGuard, resendVerification);
 
-module.exports = router;
+export default router;
