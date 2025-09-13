@@ -1,11 +1,9 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authGuard, requireRole } = require('../middleware/authGuard');
+import { authGuard, requireRole } from '../middleware/authGuard.js';
 
 router.get('/status', authGuard, requireRole(['admin']), (req, res) => {
   res.status(200).json({ success: true, data: { status: 'ready' } });
 });
 
-module.exports = router;
-
-
+export default router;

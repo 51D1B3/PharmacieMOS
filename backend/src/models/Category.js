@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const slugify = require('slugify');
+import mongoose from 'mongoose';
+import slugify from 'slugify';
 
 const categorySchema = new mongoose.Schema({
     // Informations de base
@@ -311,4 +311,4 @@ categorySchema.methods.updateStats = function() {
     });
 };
 
-module.exports = mongoose.model('Category', categorySchema);
+export default mongoose.model('Category', categorySchema);

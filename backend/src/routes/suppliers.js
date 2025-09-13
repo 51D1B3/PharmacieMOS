@@ -1,16 +1,15 @@
-const express = require('express');
-const Joi = require('joi');
-const {
+import express from 'express';
+const router = express.Router();
+import Joi from 'joi';
+import {
     getSuppliers,
     getSupplier,
     createSupplier,
     updateSupplier,
     deleteSupplier
-} = require('../controllers/supplierController');
-const { authGuard, requireRole } = require('../middleware/authGuard');
-const { validateBody } = require('../middleware/errorHandler');
-
-const router = express.Router();
+} from '../controllers/supplierController.js';
+import { authGuard, requireRole } from '../middleware/authGuard.js';
+import { validateBody } from '../middleware/errorHandler.js';
 
 // Seul l'admin peut tout gérer
 const canManage = requireRole('admin');
@@ -56,4 +55,4 @@ router.route('/:id')
     .put(validateBody(updateSupplierSchema), updateSupplier)
     .delete(deleteSupplier);
 
-module.exports = router;
+export default router;

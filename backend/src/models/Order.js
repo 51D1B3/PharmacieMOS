@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const orderItemSchema = new mongoose.Schema({
   product: {
@@ -477,4 +477,4 @@ orderSchema.statics.getOrderStats = function(startDate, endDate) {
   ]);
 };
 
-module.exports = mongoose.model('Order', orderSchema);
+export default mongoose.model('Order', orderSchema);

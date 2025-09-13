@@ -1,4 +1,4 @@
-const logger = require('../utils/logger.js');
+import logger from '../utils/logger.js';
 
 // Classe d'erreur personnalisée
 class AppError extends Error {
@@ -284,7 +284,7 @@ const validateQuery = (schema) => {
   };
 };
 
-module.exports = {
+export {
   AppError,
   errorHandler,
   notFoundHandler,

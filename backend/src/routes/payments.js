@@ -1,11 +1,9 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authGuard } = require('../middleware/authGuard');
+import { authGuard } from '../middleware/authGuard.js';
 
 router.post('/intent', authGuard, (req, res) => {
   res.status(200).json({ success: true, data: { clientSecret: 'stub' } });
 });
 
-module.exports = router;
-
-
+export default router;

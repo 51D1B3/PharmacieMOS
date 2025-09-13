@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const stockMovementSchema = new mongoose.Schema({
     // Informations de base
@@ -27,7 +27,9 @@ const stockMovementSchema = new mongoose.Schema({
     referenceType: {
         type: String,
         enum: ['purchase_order', 'sales_order', 'manual', 'inventory', 'transfer', 'return', 'damage', 'expiry'],
-        required: [true, 'Le type de référence est requis']
+        required: function() {
+            return ['purchase_order', 'sales_order', 'transfer', 'return'].includes(this.referenceType);
+        }
     },
     referenceId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -401,4 +403,4 @@ stockMovementSchema.methods.cancel = function(userId, notes = '') {
     return this.save();
 };
 
-module.exports = mongoose.model('StockMovement', stockMovementSchema);
+export default mongoose.model('StockMovement', stockMovementSchema);

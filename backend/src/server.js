@@ -1,38 +1,45 @@
-const path = require('path');
-const dotenv = require('dotenv');
+import path from 'path';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+
+// Définir __filename et __dirname pour les modules ES
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Toujours charger le .env du dossier racine du projet (backend/.env)
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const helmet = require('helmet');
-const compression = require('compression');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
-const Redis = require('redis');
-const { createAdapter } = require('@socket.io/redis-adapter');
-const cookieParser = require('cookie-parser');
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import Redis from 'redis';
+import { createAdapter } from '@socket.io/redis-adapter';
+import cookieParser from 'cookie-parser';
 
-const logger = require('./utils/logger.js');
-const connectDB = require('./config/database.js');
-const { errorHandler, notFoundHandler } = require('./middleware/errorHandler.js');
+import logger from './utils/logger.js';
+import connectDB from './config/database.js';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
-const authRoutes = require('./routes/auth.js');
-const adminRoutes = require('./routes/admin.js');
-const prescriptionRoutes = require('./routes/prescriptions.js');
-const categoryRoutes = require('./routes/categories.js');
-const productRoutes = require('./routes/products.js');
-const orderRoutes = require('./routes/orders.js');
-const supplierRoutes = require('./routes/suppliers.js');
-const userRoutes = require('./routes/users.js');
-const cartRoutes = require('./routes/cart.js');
-const chatRoutes = require('./routes/chat.js');
-const notificationRoutes = require('./routes/notifications.js');
-const paymentRoutes = require('./routes/payments.js');
-const posRoutes = require('./routes/pos.js');
-const stockRoutes = require('./routes/stock.js');
+import authRoutes from './routes/auth.js';
+import adminRoutes from './routes/admin.js';
+import prescriptionRoutes from './routes/prescriptions.js';
+import categoryRoutes from './routes/categories.js';
+import productRoutes from './routes/products.js';
+import orderRoutes from './routes/orders.js';
+import supplierRoutes from './routes/suppliers.js';
+import userRoutes from './routes/users.js';
+import cartRoutes from './routes/cart.js';
+import chatRoutes from './routes/chat.js';
+import notificationRoutes from './routes/notifications.js';
+import paymentRoutes from './routes/payments.js';
+import posRoutes from './routes/pos.js';
+import stockRoutes from './routes/stock.js';
 
 const app = express();
 const server = createServer(app);
@@ -159,4 +166,4 @@ const startServer = async () => {
 
 startServer();
 
-module.exports = { app, server };
+export { app, server };

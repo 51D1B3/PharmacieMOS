@@ -1,10 +1,9 @@
-const express = require('express');
-const { authGuard, requireRole } = require('../middleware/authGuard.js');
-const { createAdmin } = require('../controllers/adminController.js');
-const { validateBody } = require('../middleware/errorHandler.js');
-const Joi = require('joi');
-
+import express from 'express';
 const router = express.Router();
+import { authGuard, requireRole } from '../middleware/authGuard.js';
+import { createAdmin } from '../controllers/adminController.js';
+import { validateBody } from '../middleware/errorHandler.js';
+import Joi from 'joi';
 
 // Schéma de validation pour la création d'un admin (email/password uniquement)
 const createAdminSchema = Joi.object({
@@ -26,4 +25,4 @@ router.post(
     createAdmin
 );
 
-module.exports = router;
+export default router;

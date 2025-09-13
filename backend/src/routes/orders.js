@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authGuard, requireRole } = require('../middleware/authGuard');
-const {
+import { authGuard, requireRole } from '../middleware/authGuard.js';
+import {
   getOrders,
   getOrder,
   createOrder,
@@ -9,7 +9,7 @@ const {
   getMyOrders,
   cancelOrder,
   getOrderStats
-} = require('../controllers/orderController');
+} from '../controllers/orderController.js';
 
 router.get('/', authGuard, requireRole(['admin']), getOrders);
 router.get('/stats', authGuard, requireRole(['admin']), getOrderStats);
@@ -19,6 +19,4 @@ router.post('/', authGuard, createOrder);
 router.patch('/:id/status', authGuard, requireRole(['admin']), updateOrderStatus);
 router.post('/:id/cancel', authGuard, cancelOrder);
 
-module.exports = router;
-
-
+export default router;

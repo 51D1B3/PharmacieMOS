@@ -1,9 +1,9 @@
-const Prescription = require('../models/Prescription.js');
-const User = require('../models/User.js');
-const { cloudinary } = require('../config/cloudinary.js');
+import Prescription from '../models/Prescription.js';
+import User from '../models/User.js';
+import cloudinary from '../config/cloudinary.js'; // Correction ici
 
 // Créer une nouvelle ordonnance
-const createPrescription = async (req, res) => {
+export const createPrescription = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'Image requise' });
@@ -27,7 +27,7 @@ const createPrescription = async (req, res) => {
 };
 
 // Récupérer toutes les ordonnances (admin)
-const getAllPrescriptions = async (req, res) => {
+export const getAllPrescriptions = async (req, res) => {
   try {
     const prescriptions = await Prescription.find()
       .populate('clientId', 'nom prenom email telephone')
@@ -44,7 +44,7 @@ const getAllPrescriptions = async (req, res) => {
 };
 
 // Mettre à jour le statut d'une ordonnance
-const updatePrescriptionStatus = async (req, res) => {
+export const updatePrescriptionStatus = async (req, res) => {
   try {
     const { status, notes } = req.body;
     
@@ -66,5 +66,3 @@ const updatePrescriptionStatus = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
-module.exports = { createPrescription, getAllPrescriptions, updatePrescriptionStatus };

@@ -1,20 +1,19 @@
-const express = require('express');
-const {
+import express from 'express';
+const router = express.Router();
+import {
     getCategories,
     getCategory,
     createCategory,
     updateCategory,
     deleteCategory
-} = require('../controllers/categoryController');
-const { authGuard, requireRole } = require('../middleware/authGuard');
-const { validate } = require('../middleware/validator');
-const {
+} from '../controllers/categoryController.js';
+import { authGuard, requireRole } from '../middleware/authGuard.js';
+import { validate } from '../middleware/validator.js';
+import {
     createCategorySchema,
     updateCategorySchema,
     getCategoriesQuerySchema
-} = require('../validators/categoryValidator');
-
-const router = express.Router();
+} from '../validators/categoryValidator.js';
 
 // Routes publiques
 router.route('/')
@@ -33,4 +32,4 @@ router.route('/:id')
     .put(validate(updateCategorySchema, 'body'), updateCategory)
     .delete(deleteCategory);
 
-module.exports = router;
+export default router;

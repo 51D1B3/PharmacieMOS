@@ -1,11 +1,7 @@
 let ioInstance = null;
 
-const setIO = (io) => {
+export const setIO = (io) => {
   ioInstance = io;
 };
 
-const getIO = () => ioInstance;
-
-module.exports = { setIO, getIO };
-
-
+export const getIO = () => ioInstance;

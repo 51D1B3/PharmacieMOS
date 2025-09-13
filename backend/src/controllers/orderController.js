@@ -1,15 +1,15 @@
-const Order = require('../models/Order');
-const Product = require('../models/Product');
-const User = require('../models/User');
-const StockMovement = require('../models/StockMovement');
-const { AppError, asyncHandler } = require('../middleware/errorHandler');
-const logger = require('../utils/logger');
-const { getIO } = require('../socket/io');
+import Order from '../models/Order.js';
+import Product from '../models/Product.js';
+import User from '../models/User.js';
+import StockMovement from '../models/StockMovement.js';
+import { AppError, asyncHandler } from '../middleware/errorHandler.js';
+import logger from '../utils/logger.js';
+import { getIO } from '../socket/io.js';
 
 // @desc    Récupérer toutes les commandes avec pagination et filtres
 // @route   GET /api/orders
 // @access  Private (Admin, Pharmacist)
-const getOrders = asyncHandler(async (req, res) => {
+export const getOrders = asyncHandler(async (req, res) => {
     const {
         page = 1,
         limit = 20,
@@ -77,7 +77,7 @@ const getOrders = asyncHandler(async (req, res) => {
 // @desc    Récupérer une commande par ID
 // @route   GET /api/orders/:id
 // @access  Private
-const getOrder = asyncHandler(async (req, res) => {
+export const getOrder = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id)
         .populate('customer', 'nom prenom email telephone adresse')
         .populate('seller', 'nom prenom')
@@ -102,7 +102,7 @@ const getOrder = asyncHandler(async (req, res) => {
 // @desc    Créer une nouvelle commande
 // @route   POST /api/orders
 // @access  Private
-const createOrder = asyncHandler(async (req, res) => {
+export const createOrder = asyncHandler(async (req, res) => {
     const {
         items,
         orderType = 'commande',
@@ -278,7 +278,7 @@ const createOrder = asyncHandler(async (req, res) => {
 // @desc    Mettre à jour le statut d'une commande
 // @route   PATCH /api/orders/:id/status
 // @access  Private (Admin, Pharmacist)
-const updateOrderStatus = asyncHandler(async (req, res) => {
+export const updateOrderStatus = asyncHandler(async (req, res) => {
     const { status, notes } = req.body;
 
     const order = await Order.findById(req.params.id);
@@ -385,7 +385,7 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 // @desc    Récupérer les commandes d'un client
 // @route   GET /api/orders/my-orders
 // @access  Private (Client)
-const getMyOrders = asyncHandler(async (req, res) => {
+export const getMyOrders = asyncHandler(async (req, res) => {
     const { page = 1, limit = 20, status } = req.query;
 
     const query = { customer: req.user.id };
@@ -418,7 +418,7 @@ const getMyOrders = asyncHandler(async (req, res) => {
 // @desc    Annuler une commande
 // @route   POST /api/orders/:id/cancel
 // @access  Private
-const cancelOrder = asyncHandler(async (req, res) => {
+export const cancelOrder = asyncHandler(async (req, res) => {
     const { reason } = req.body;
 
     const order = await Order.findById(req.params.id);
@@ -444,7 +444,7 @@ const cancelOrder = asyncHandler(async (req, res) => {
 // @desc    Récupérer les statistiques des commandes
 // @route   GET /api/orders/stats
 // @access  Private (Admin, Pharmacist)
-const getOrderStats = asyncHandler(async (req, res) => {
+export const getOrderStats = asyncHandler(async (req, res) => {
     const { period = '30d' } = req.query;
 
     // Calculer la date de début selon la période
@@ -544,13 +544,3 @@ const getOrderStats = asyncHandler(async (req, res) => {
         }
     });
 });
-
-module.exports = {
-    getOrders,
-    getOrder,
-    createOrder,
-    updateOrderStatus,
-    getMyOrders,
-    cancelOrder,
-    getOrderStats
-};

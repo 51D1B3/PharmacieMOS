@@ -1,13 +1,11 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authGuard } = require('../middleware/authGuard');
+import { authGuard } from '../middleware/authGuard.js';
+import Chat from '../models/Chat.js';
 
 router.get('/unread-count', authGuard, async (req, res) => {
-  const Chat = require('../models/Chat');
   const count = await Chat.getUnreadCount(req.userId);
   res.status(200).json({ success: true, data: { count } });
 });
 
-module.exports = router;
-
-
+export default router;

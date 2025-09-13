@@ -1,12 +1,12 @@
-const Supplier = require('../models/Supplier');
-const Product = require('../models/Product');
-const { AppError, asyncHandler } = require('../middleware/errorHandler');
-const logger = require('../utils/logger');
+import Supplier from '../models/Supplier.js';
+import Product from '../models/Product.js';
+import { AppError, asyncHandler } from '../middleware/errorHandler.js';
+import logger from '../utils/logger.js';
 
 // @desc    Récupérer tous les fournisseurs
 // @route   GET /api/suppliers
 // @access  Private (Admin)
-exports.getSuppliers = asyncHandler(async (req, res) => {
+export const getSuppliers = asyncHandler(async (req, res) => {
     const { page = 1, limit = 20, search, sortBy = 'name', sortOrder = 'asc' } = req.query;
 
     const query = { isActive: true };
@@ -43,7 +43,7 @@ exports.getSuppliers = asyncHandler(async (req, res) => {
 // @desc    Récupérer un fournisseur par ID
 // @route   GET /api/suppliers/:id
 // @access  Private (Admin)
-exports.getSupplier = asyncHandler(async (req, res) => {
+export const getSupplier = asyncHandler(async (req, res) => {
     const supplier = await Supplier.findById(req.params.id);
 
     if (!supplier || !supplier.isActive) {
@@ -59,7 +59,7 @@ exports.getSupplier = asyncHandler(async (req, res) => {
 // @desc    Créer un nouveau fournisseur
 // @route   POST /api/suppliers
 // @access  Private (Admin)
-exports.createSupplier = asyncHandler(async (req, res) => {
+export const createSupplier = asyncHandler(async (req, res) => {
     const { name, contactPerson, email, phone, address, notes } = req.body;
 
     const existingSupplier = await Supplier.findOne({ email });
@@ -88,7 +88,7 @@ exports.createSupplier = asyncHandler(async (req, res) => {
 // @desc    Mettre à jour un fournisseur
 // @route   PUT /api/suppliers/:id
 // @access  Private (Admin)
-exports.updateSupplier = asyncHandler(async (req, res) => {
+export const updateSupplier = asyncHandler(async (req, res) => {
     const supplier = await Supplier.findById(req.params.id);
 
     if (!supplier || !supplier.isActive) {
@@ -120,7 +120,7 @@ exports.updateSupplier = asyncHandler(async (req, res) => {
 // @desc    Supprimer un fournisseur (soft delete)
 // @route   DELETE /api/suppliers/:id
 // @access  Private (Admin)
-exports.deleteSupplier = asyncHandler(async (req, res) => {
+export const deleteSupplier = asyncHandler(async (req, res) => {
     const supplier = await Supplier.findById(req.params.id);
 
     if (!supplier) {

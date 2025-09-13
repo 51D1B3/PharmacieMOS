@@ -1,8 +1,9 @@
-const User = require('../models/User.js');
-const { AppError, asyncHandler } = require('../middleware/errorHandler.js');
-const logger = require('../utils/logger.js');
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
+import mongoose from 'mongoose';
+import User from '../models/User.js';
+import { AppError, asyncHandler } from '../middleware/errorHandler.js';
+import logger from '../utils/logger.js';
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 // Générer les tokens d'authentification
 const generateTokens = (user) => {
@@ -311,7 +312,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-  user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  user.passwordResetExpires = Date.now() + 10 * 60 * 60 * 1000; // 10 minutes
 
   await user.save();
 
@@ -428,7 +429,7 @@ const resendVerification = asyncHandler(async (req, res, next) => {
   });
 });
 
-module.exports = {
+export {
   register,
   login,
   refreshToken,

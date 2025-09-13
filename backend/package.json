@@ -1,6 +1,7 @@
 {
   "name": "pharmacie-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "Backend API pour la plateforme de gestion de pharmacie",
   "main": "src/server.js",
   "scripts": {

@@ -1,8 +1,8 @@
-const Product = require('../models/Product.js');
-const Category = require('../models/Category.js');
-const Supplier = require('../models/Supplier.js');
-const StockMovement = require('../models/StockMovement.js');
-const Order = require('../models/Order.js');
+import Product from '../models/Product.js';
+import Category from '../models/Category.js';
+import Supplier from '../models/Supplier.js';
+import StockMovement from '../models/StockMovement.js';
+import Order from '../models/Order.js';
 
 class AppError extends Error {
   constructor(message, statusCode) {
@@ -17,7 +17,7 @@ const logger = { info: console.log, error: console.error };
 // @desc    Récupérer tous les produits avec pagination et filtres
 // @route   GET /api/products
 // @access  Public
-const getProducts = asyncHandler(async (req, res) => {
+export const getProducts = asyncHandler(async (req, res) => {
     const {
         page = 1,
         limit = 20,
@@ -86,7 +86,7 @@ const getProducts = asyncHandler(async (req, res) => {
 // @desc    Récupérer un produit par ID
 // @route   GET /api/products/:id
 // @access  Public
-const getProduct = asyncHandler(async (req, res) => {
+export const getProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id)
         .populate('supplierId', 'name email phone')
         .populate('category', 'name slug')
@@ -114,7 +114,7 @@ const getProduct = asyncHandler(async (req, res) => {
 // @desc    Récupérer un produit par SKU
 // @route   GET /api/products/sku/:sku
 // @access  Public
-const getProductBySku = asyncHandler(async (req, res) => {
+export const getProductBySku = asyncHandler(async (req, res) => {
     const product = await Product.findOne({ sku: req.params.sku, isActive: true })
         .populate('supplierId', 'name')
         .populate('category', 'name slug');
@@ -132,7 +132,7 @@ const getProductBySku = asyncHandler(async (req, res) => {
 // @desc    Récupérer un produit par code-barres
 // @route   GET /api/products/barcode/:barcode
 // @access  Public
-const getProductByBarcode = asyncHandler(async (req, res) => {
+export const getProductByBarcode = asyncHandler(async (req, res) => {
     const product = await Product.findOne({ barcode: req.params.barcode, isActive: true })
         .populate('supplierId', 'name')
         .populate('category', 'name slug');
@@ -150,7 +150,7 @@ const getProductByBarcode = asyncHandler(async (req, res) => {
 // @desc    Créer un nouveau produit
 // @route   POST /api/products
 // @access  Private (Admin, Pharmacist)
-const createProduct = asyncHandler(async (req, res) => {
+export const createProduct = asyncHandler(async (req, res) => {
     const {
         name,
         brand,
@@ -177,7 +177,7 @@ const createProduct = asyncHandler(async (req, res) => {
     }
 
     if (!imagePath) {
-        throw new AppError("L'image du produit est requise.", 400);
+        throw new AppError("L'image du produit est requrise.", 400);
     }
 
     if (await Product.findOne({ sku })) {
@@ -229,7 +229,7 @@ const createProduct = asyncHandler(async (req, res) => {
 // @desc    Mettre à jour un produit
 // @route   PUT /api/products/:id
 // @access  Private (Admin, Pharmacist)
-const updateProduct = asyncHandler(async (req, res) => {
+export const updateProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (!product) {
@@ -269,6 +269,7 @@ const updateProduct = asyncHandler(async (req, res) => {
             productId: product._id,
             type: newStock > oldStock ? 'in' : 'out',
             quantity: Math.abs(newStock - oldStock),
+            reference: `Initial stock for ${product.sku}`,
             stockBefore: oldStock,
             stockAfter: newStock,
             reason: 'adjustment',
@@ -290,7 +291,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 // @desc    Supprimer un produit (soft delete)
 // @route   DELETE /api/products/:id
 // @access  Private (Admin)
-const deleteProduct = asyncHandler(async (req, res) => {
+export const deleteProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (!product) {
@@ -322,7 +323,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // @desc    Ajuster le stock d'un produit
 // @route   POST /api/products/:id/stock
 // @access  Private (Admin, Pharmacist)
-const adjustStock = asyncHandler(async (req, res) => {
+export const adjustStock = asyncHandler(async (req, res) => {
     const { quantity, reason, notes, batchNumber, expiryDate } = req.body;
 
     const product = await Product.findById(req.params.id);
@@ -367,7 +368,7 @@ const adjustStock = asyncHandler(async (req, res) => {
 // @desc    Récupérer l'historique des mouvements de stock
 // @route   GET /api/products/:id/stock-history
 // @access  Private (Admin, Pharmacist)
-const getStockHistory = asyncHandler(async (req, res) => {
+export const getStockHistory = asyncHandler(async (req, res) => {
     const { page = 1, limit = 20, type } = req.query;
 
     if (!await Product.findById(req.params.id)) {
@@ -403,7 +404,7 @@ const getStockHistory = asyncHandler(async (req, res) => {
 // @desc    Rechercher des produits
 // @route   GET /api/products/search
 // @access  Public
-const searchProducts = asyncHandler(async (req, res) => {
+export const searchProducts = asyncHandler(async (req, res) => {
     const { q, limit = 10 } = req.query;
 
     if (!q || q.length < 2) {
@@ -428,7 +429,7 @@ const searchProducts = asyncHandler(async (req, res) => {
 // @desc    Récupérer les produits en rupture de stock
 // @route   GET /api/products/out-of-stock
 // @access  Private (Admin, Pharmacist)
-const getOutOfStockProducts = asyncHandler(async (req, res) => {
+export const getOutOfStockProducts = asyncHandler(async (req, res) => {
     const { page = 1, limit = 20 } = req.query;
 
     const query = { 'stock.onHand': { $lte: 0 }, isActive: true };
@@ -459,7 +460,7 @@ const getOutOfStockProducts = asyncHandler(async (req, res) => {
 // @desc    Récupérer les produits expirant bientôt
 // @route   GET /api/products/expiring-soon
 // @access  Private (Admin, Pharmacist)
-const getExpiringSoonProducts = asyncHandler(async (req, res) => {
+export const getExpiringSoonProducts = asyncHandler(async (req, res) => {
     const { days = 30, page = 1, limit = 20 } = req.query;
 
     const expiryDate = new Date();
@@ -498,7 +499,7 @@ const getExpiringSoonProducts = asyncHandler(async (req, res) => {
 // @desc    Récupérer les produits avec stock faible
 // @route   GET /api/products/alerts/low-stock
 // @access  Private (Admin, Pharmacist)
-const getLowStockProducts = asyncHandler(async (req, res) => {
+export const getLowStockProducts = asyncHandler(async (req, res) => {
     const { threshold = 50, page = 1, limit = 20 } = req.query;
 
     const query = {
@@ -534,19 +535,3 @@ const getLowStockProducts = asyncHandler(async (req, res) => {
         }
     });
 });
-
-module.exports = {
-    getProducts,
-    getProduct,
-    getProductBySku,
-    getProductByBarcode,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    adjustStock,
-    getStockHistory,
-    searchProducts,
-    getOutOfStockProducts,
-    getExpiringSoonProducts,
-    getLowStockProducts
-};

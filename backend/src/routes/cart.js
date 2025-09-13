@@ -1,12 +1,10 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { authGuard } = require('../middleware/authGuard');
+import { authGuard } from '../middleware/authGuard.js';
 
 // Stubs basiques pour éviter 404
 router.get('/', authGuard, (req, res) => {
   res.status(200).json({ success: true, data: [] });
 });
 
-module.exports = router;
-
-
+export default router;

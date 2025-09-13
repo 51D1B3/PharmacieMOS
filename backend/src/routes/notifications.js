@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { createNotification } = require('../controllers/notificationController');
+import { createNotification } from '../controllers/notificationController.js';
 
 // Route pour créer une notification
 router.post('/', createNotification);
 
-module.exports = router;
+export default router;

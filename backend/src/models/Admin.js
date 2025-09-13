@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const adminSchema = new mongoose.Schema({
   email: {
@@ -8,7 +8,7 @@ const adminSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Email invalide']
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w{2,3})+$/, 'Email invalide']
   },
   password: {
     type: String,
@@ -38,4 +38,4 @@ adminSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = mongoose.model('Admin', adminSchema);
+export default mongoose.model('Admin', adminSchema);

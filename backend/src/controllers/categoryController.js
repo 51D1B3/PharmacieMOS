@@ -1,12 +1,12 @@
-const Category = require('../models/Category');
-const Product = require('../models/Product');
-const { AppError, asyncHandler } = require('../middleware/errorHandler');
-const logger = require('../utils/logger');
+import Category from '../models/Category.js';
+import Product from '../models/Product.js';
+import { AppError, asyncHandler } from '../middleware/errorHandler.js';
+import logger from '../utils/logger.js';
 
 // @desc    Récupérer toutes les catégories
 // @route   GET /api/categories
 // @access  Public
-const getCategories = asyncHandler(async (req, res) => {
+export const getCategories = asyncHandler(async (req, res) => {
     const { page = 1, limit = 20, search, sortBy = 'name', sortOrder = 'asc', tree = false } = req.query;
 
     if (tree) {
@@ -67,7 +67,7 @@ const getCategories = asyncHandler(async (req, res) => {
 // @desc    Récupérer une catégorie par ID
 // @route   GET /api/categories/:id
 // @access  Public
-const getCategory = asyncHandler(async (req, res) => {
+export const getCategory = asyncHandler(async (req, res) => {
     const category = await Category.findById(req.params.id).populate('parent').populate('children');
 
     if (!category) {
@@ -83,7 +83,7 @@ const getCategory = asyncHandler(async (req, res) => {
 // @desc    Créer une nouvelle catégorie
 // @route   POST /api/categories
 // @access  Private (Admin)
-const createCategory = asyncHandler(async (req, res) => {
+export const createCategory = asyncHandler(async (req, res) => {
     // La validation est maintenant gérée par le middleware Joi.
     const { name, parentId } = req.body;
 
@@ -124,7 +124,7 @@ const createCategory = asyncHandler(async (req, res) => {
 // @desc    Mettre à jour une catégorie
 // @route   PUT /api/categories/:id
 // @access  Private (Admin)
-const updateCategory = asyncHandler(async (req, res) => {
+export const updateCategory = asyncHandler(async (req, res) => {
     // req.body est déjà validé et nettoyé par le middleware Joi
     const { id } = req.params;
     const updateData = req.body;
@@ -162,7 +162,7 @@ const updateCategory = asyncHandler(async (req, res) => {
 // @desc    Supprimer une catégorie
 // @route   DELETE /api/categories/:id
 // @access  Private (Admin)
-const deleteCategory = asyncHandler(async (req, res) => {
+export const deleteCategory = asyncHandler(async (req, res) => {
     const category = await Category.findById(req.params.id);
 
     if (!category) {
@@ -188,11 +188,3 @@ const deleteCategory = asyncHandler(async (req, res) => {
         message: 'Catégorie supprimée avec succès'
     });
 });
-
-module.exports = {
-    getCategories,
-    getCategory,
-    createCategory,
-    updateCategory,
-    deleteCategory
-};

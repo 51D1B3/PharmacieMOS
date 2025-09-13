@@ -1,15 +1,15 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const Joi = require('joi');
-const {
+import Joi from 'joi';
+import {
     getCategories,
     getCategory,
     createCategory,
     updateCategory,
     deleteCategory
-} = require('../controllers/categoryController');
-const { authGuard, requireRole } = require('../middleware/authGuard');
-const { validateBody } = require('../middleware/errorHandler');
+} from '../controllers/categoryController.js';
+import { authGuard, requireRole } from '../middleware/authGuard.js';
+import { validateBody } from '../middleware/errorHandler.js';
 
 // Schéma de validation pour un ObjectId de MongoDB
 const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/, 'MongoDB ObjectId');
@@ -51,4 +51,4 @@ router.route('/:id')
     .put(authGuard, requireRole(['admin']), validateBody(updateCategorySchema), updateCategory)
     .delete(authGuard, requireRole(['admin']), deleteCategory);
 
-module.exports = router;
+export default router;
