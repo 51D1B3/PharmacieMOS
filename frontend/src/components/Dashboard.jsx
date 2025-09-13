@@ -19,9 +19,10 @@ import PaymentModal from './PaymentModal.jsx';
 import PharmacyInfoModal from './PharmacyInfoModal.jsx';
 import PriceDisplayDemo from './PriceDisplayDemo.jsx';
 import ProductsGrid from './ProductsGrid.jsx';
+import ProfilePage from './ProfilePage.jsx';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const { cartItems, removeFromCart, updateCartQuantity, getCartItemsCount, clearCart } = useCart();
 
   const [loading, setLoading] = useState(true);
@@ -44,6 +45,7 @@ const Dashboard = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [showPharmacyInfo, setShowPharmacyInfo] = useState(false);
   const [activeTab, setActiveTab] = useState('accueil');
+  const [showProfile, setShowProfile] = useState(false);
   const cartTotal = cartItems.reduce((sum, item) => sum + (item.product.priceTTC * item.quantity), 0);
 
   useEffect(() => {
@@ -113,25 +115,20 @@ const Dashboard = () => {
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo et Navigation */}
-            <div className="flex items-center space-x-8">
-              <div className="flex-shrink-0">
-                <div className="flex items-center space-x-3">
-                  <img
-                    src="/images/mon_logo.png"
-                    alt="Mon Logo"
-                    className="h-14 w-14 rounded-full object-cover border-2 border-primary-500 shadow"
-                  />
-                </div>
-              </div>
+            {/* Logo */}
+            <div className="flex items-center">
+              <img
+                src="/images/mon_logo.png"
+                alt="Mon Logo"
+                className="h-14 w-14 rounded-full object-cover border-2 border-primary-500 shadow"
+              />
             </div>
 
-            {/* User Menu */}
-            <div className="flex items-center space-x-6">
-              {/* Navigation Tabs */}
+            {/* Navigation Tabs - Centrées */}
+            <div className="flex items-center justify-center space-x-12">
               <button
                 onClick={() => setActiveTab('accueil')}
-                className={`flex items-center space-x-2 px-3 py-2 text-sm font-medium transition-colors text-white ${
+                className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium transition-colors text-white ${
                   activeTab === 'accueil' 
                     ? 'border-b-2 border-primary-600 dark:border-primary-400' 
                     : 'hover:text-primary-200'
@@ -142,7 +139,7 @@ const Dashboard = () => {
               </button>
               <button
                 onClick={() => setActiveTab('produits')}
-                className={`flex items-center space-x-2 px-3 py-2 text-sm font-medium transition-colors text-white ${
+                className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium transition-colors text-white ${
                   activeTab === 'produits' 
                     ? 'border-b-2 border-primary-600 dark:border-primary-400' 
                     : 'hover:text-primary-200'
@@ -151,9 +148,11 @@ const Dashboard = () => {
                 <Package className="h-4 w-4 text-white" />
                 <span>Produits</span>
               </button>
-              
-              {/* User Dropdowns */}
-              <UserDropdowns user={user} />
+            </div>
+
+            {/* User Menu */}
+            <div className="flex items-center space-x-6">
+
               
               {/* Cart */}
               <button
@@ -227,8 +226,11 @@ const Dashboard = () => {
                 )}
               </div>
 
+              {/* User Dropdowns */}
+              <UserDropdowns user={user} onShowProfile={() => setShowProfile(true)} />
+              
               {/* User Profile */}
-              <UserProfile user={user} onLogout={logout} />
+              <UserProfile user={user} onLogout={logout} onShowProfile={() => setShowProfile(true)} />
             </div>
           </div>
         </div>
@@ -337,6 +339,15 @@ const Dashboard = () => {
         isOpen={showPharmacyInfo}
         onClose={() => setShowPharmacyInfo(false)}
       />
+
+      {/* Profile Page */}
+      {showProfile && (
+        <ProfilePage 
+          user={user}
+          onClose={() => setShowProfile(false)}
+          onUpdateUser={updateUser}
+        />
+      )}
 
 
       {/* Click outside handlers */}

@@ -40,20 +40,20 @@ const MessageContextMenu = ({
   if (isEditing) {
     return (
       <div 
-        className="fixed bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50 min-w-80"
+        className="fixed bg-gray-800 border border-gray-600 rounded-lg shadow-lg p-4 z-50 min-w-80"
         style={{ 
           left: Math.min(position.x, window.innerWidth - 320),
           top: Math.min(position.y, window.innerHeight - 150)
         }}
       >
         <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-white mb-1">
             Modifier le message
           </label>
           <textarea
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+            className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
             rows={3}
             autoFocus
           />
@@ -61,7 +61,7 @@ const MessageContextMenu = ({
         <div className="flex justify-end space-x-2">
           <button
             onClick={handleCancelEdit}
-            className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+            className="px-3 py-1 text-sm border border-gray-600 text-gray-300 rounded hover:bg-gray-700"
           >
             Annuler
           </button>
@@ -79,7 +79,7 @@ const MessageContextMenu = ({
 
   return (
     <div 
-      className="fixed bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 min-w-32"
+      className="fixed bg-gray-800 border border-gray-600 rounded-lg shadow-lg py-2 z-50 min-w-32"
       style={{ 
         left: Math.min(position.x, window.innerWidth - 150),
         top: Math.min(position.y, window.innerHeight - 100)
@@ -88,7 +88,7 @@ const MessageContextMenu = ({
       {canEdit && (
         <button
           onClick={handleEdit}
-          className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+          className="w-full px-4 py-2 text-left text-sm text-gray-300 hover:bg-gray-700 flex items-center space-x-2"
         >
           <Edit3 className="h-4 w-4" />
           <span>Modifier</span>
@@ -96,7 +96,7 @@ const MessageContextMenu = ({
       )}
       <button
         onClick={handleDelete}
-        className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
+        className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-900/30 flex items-center space-x-2"
       >
         <Trash2 className="h-4 w-4" />
         <span>Supprimer</span>

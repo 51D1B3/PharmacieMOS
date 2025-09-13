@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { User, ChevronDown, ChevronUp, LogOut, Phone } from 'lucide-react';
 
-const UserProfile = ({ user, onLogout }) => {
+const UserProfile = ({ user, onLogout, onShowProfile }) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
 
@@ -21,7 +21,7 @@ const UserProfile = ({ user, onLogout }) => {
       icon: User,
       label: 'Mon profil',
       description: 'Gérer mes informations personnelles',
-      action: () => console.log('Profil clicked')
+      action: () => onShowProfile && onShowProfile()
     }
   ];
 
@@ -30,7 +30,7 @@ const UserProfile = ({ user, onLogout }) => {
       {/* User Button */}
       <button
         onClick={() => setShowMenu(!showMenu)}
-        className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
+        className="flex items-center space-x-2 text-white hover:text-gray-200 transition-colors"
       >
         <div className="h-8 w-8 rounded-full overflow-hidden border-2 border-primary-200">
           {user?.profileImage ? (
@@ -48,7 +48,7 @@ const UserProfile = ({ user, onLogout }) => {
             <User className="h-4 w-4 text-primary-600" />
           </div>
         </div>
-        <span className="hidden md:block font-medium">
+        <span className="hidden md:block font-medium text-white">
           {user?.prenom} {user?.nom}
         </span>
         {showMenu ? (
