@@ -96,14 +96,10 @@ class ApiService {
   }
   async getProducts(params) {
     try {
-      console.log('Calling API: GET /products with params:', params);
       const response = await this.api.get('/products', { params });
-      console.log('API Response:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching products:', error);
-      console.error('Error response:', error.response?.data);
-      console.error('Error status:', error.response?.status);
       throw error;
     }
   }

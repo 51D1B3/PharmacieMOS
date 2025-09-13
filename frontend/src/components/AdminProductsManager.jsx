@@ -256,9 +256,9 @@ const AdminProductsManager = () => {
                           />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                          <div className="text-sm text-gray-500">{product.brand}</div>
-                          <div className="text-xs text-gray-400">Réf: {product.sku}</div>
+                          <div className="text-sm font-medium text-gray-900">{product.name || 'Nom non défini'}</div>
+                          <div className="text-sm text-gray-500">{product.brand || 'Marque non définie'}</div>
+                          <div className="text-xs text-gray-400">Réf: {product.sku || 'SKU non défini'}</div>
                         </div>
                       </div>
                     </td>
@@ -269,8 +269,8 @@ const AdminProductsManager = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div>
-                        <div className="font-semibold">{formatPrice(product.priceTTC)}</div>
-                        <div className="text-xs text-gray-500">HT: {formatPrice(product.priceHT)}</div>
+                        <div className="font-semibold">{formatPrice(product.priceTTC || 0)}</div>
+                        <div className="text-xs text-gray-500">HT: {formatPrice(product.priceHT || 0)}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -334,7 +334,10 @@ const AdminProductsManager = () => {
             <div>
               <p className="text-sm text-purple-600 font-medium">Total Stock</p>
               <p className="text-2xl font-bold text-purple-700">
-                {products.reduce((total, p) => total + (p.stock?.onHand || 0), 0)}
+                {products.reduce((total, p) => {
+                  const stock = p.stock?.onHand || 0;
+                  return total + stock;
+                }, 0)}
               </p>
             </div>
             <Package className="h-8 w-8 text-purple-600" />
@@ -346,7 +349,10 @@ const AdminProductsManager = () => {
             <div>
               <p className="text-sm text-green-600 font-medium">En Stock</p>
               <p className="text-2xl font-bold text-green-700">
-                {products.filter(p => (p.stock?.onHand || 0) > 0).length}
+                {products.filter(p => {
+                  const stock = p.stock?.onHand || 0;
+                  return stock > 0;
+                }).length}
               </p>
             </div>
             <Package className="h-8 w-8 text-green-600" />
@@ -374,7 +380,10 @@ const AdminProductsManager = () => {
             <div>
               <p className="text-sm text-red-600 font-medium">Rupture</p>
               <p className="text-2xl font-bold text-red-700">
-                {products.filter(p => (p.stock?.onHand || 0) === 0).length}
+                {products.filter(p => {
+                  const stock = p.stock?.onHand || 0;
+                  return stock === 0;
+                }).length}
               </p>
             </div>
             <AlertTriangle className="h-8 w-8 text-red-600" />

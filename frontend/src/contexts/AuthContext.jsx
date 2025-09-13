@@ -18,50 +18,15 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const token = localStorage.getItem('accessToken');
-      const userData = localStorage.getItem('user');
-
-      if (token && userData) {
-        try {
-          const user = JSON.parse(userData);
-          setUser(user);
-        } catch (error) {
-          console.error('Error parsing user data:', error);
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('user');
-        }
-      }
+      // Supprimer automatiquement les tokens à chaque lancement/actualisation
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      setUser(null);
       setLoading(false);
     };
-
-    // Clear session only when window is actually closed (not on refresh)
-    const handleBeforeUnload = (event) => {
-      // Ne supprimer les tokens que si c'est une vraie fermeture de fenêtre
-      // Pas lors d'un refresh ou navigation
-      if (event.type === 'beforeunload' && !event.returnValue) {
-        // Seulement si l'utilisateur ferme vraiment la fenêtre
-        return;
-      }
-    };
-
-    // Utiliser visibilitychange pour détecter la fermeture réelle
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        // L'onglet devient caché, mais ne pas supprimer les tokens
-        return;
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     initializeAuth();
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
   }, []);
 
   const login = async (email, password) => {
