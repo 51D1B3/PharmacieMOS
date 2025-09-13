@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Shield, Star, TrendingUp, Clock, MapPin, Phone } from 'lucide-react';
 
-const HeroSection = ({ user, onShowServices, onShowHealthTips, onShowPharmacyContact }) => {
+const HeroSection = ({ user, onShowServices, onShowHealthTips, onShowPharmacyContact, onShowProducts, onShowPromos }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
@@ -78,7 +78,12 @@ const HeroSection = ({ user, onShowServices, onShowHealthTips, onShowPharmacyCon
             
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <button
-                onClick={currentSlideData.cta === "Lire les conseils" ? onShowHealthTips : undefined}
+                onClick={
+                  currentSlideData.cta === "Lire les conseils" ? onShowHealthTips :
+                  currentSlideData.cta === "Découvrir le catalogue" ? onShowProducts :
+                  currentSlideData.cta === "Voir les promos" ? onShowPromos :
+                  undefined
+                }
                 className="bg-white text-primary-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors shadow-lg transform hover:scale-105"
               >
                 {currentSlideData.cta}

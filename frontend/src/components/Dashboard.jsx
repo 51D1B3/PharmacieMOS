@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ShoppingCart, Bell, Calendar, Phone, Info, Heart, Home, Package } from 'lucide-react';
+import { ShoppingCart, Bell, Calendar, Phone, Info, Heart, Home, Package, User, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { useCart } from '../contexts/CartContext.jsx';
 import apiService from '../services/api.jsx';
@@ -7,13 +7,16 @@ import CartDrawer from './CartDrawer.jsx';
 import ClientChatWidget from './ClientChatWidget.jsx';
 import HeroSection from './HeroSection.jsx';
 import UserProfile from './UserProfile.jsx';
+import UserDropdowns from './UserDropdowns.jsx';
 
 import QuickCart from './QuickCart.jsx';
 import PharmacyWelcomeSection from './PharmacyWelcomeSection.jsx';
 import HealthTipsModal from './HealthTipsModal.jsx';
+import ModernHealthTipsModal from './ModernHealthTipsModal.jsx';
+import PromoPage from './PromoPage.jsx';
 import PharmacyContactModal from './PharmacyContactModal.jsx';
 import ServicesModal from './ServicesModal.jsx';
-import UserDropdowns from './UserDropdowns.jsx';
+
 import PrescriptionUpload from './PrescriptionUpload.jsx';
 import PaymentModal from './PaymentModal.jsx';
 import PharmacyInfoModal from './PharmacyInfoModal.jsx';
@@ -32,6 +35,8 @@ const Dashboard = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showHealthTips, setShowHealthTips] = useState(false);
+  const [showModernHealthTips, setShowModernHealthTips] = useState(false);
+  const [showPromos, setShowPromos] = useState(false);
   const [showPharmacyContact, setShowPharmacyContact] = useState(false);
   const [chatPredefinedMessage, setChatPredefinedMessage] = useState('');
   const [showChat, setShowChat] = useState(false);
@@ -125,10 +130,10 @@ const Dashboard = () => {
             </div>
 
             {/* Navigation Tabs - Centrées */}
-            <div className="flex items-center justify-center space-x-12">
+            <div className="flex items-center justify-center space-x-10">
               <button
                 onClick={() => setActiveTab('accueil')}
-                className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium transition-colors text-white ${
+                className={`flex items-center space-x-2 px-5 py-2 text-sm font-medium transition-colors text-white ${
                   activeTab === 'accueil' 
                     ? 'border-b-2 border-primary-600 dark:border-primary-400' 
                     : 'hover:text-primary-200'
@@ -139,7 +144,7 @@ const Dashboard = () => {
               </button>
               <button
                 onClick={() => setActiveTab('produits')}
-                className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium transition-colors text-white ${
+                className={`flex items-center space-x-2 px-5 py-2 text-sm font-medium transition-colors text-white ${
                   activeTab === 'produits' 
                     ? 'border-b-2 border-primary-600 dark:border-primary-400' 
                     : 'hover:text-primary-200'
@@ -148,6 +153,14 @@ const Dashboard = () => {
                 <Package className="h-4 w-4 text-white" />
                 <span>Produits</span>
               </button>
+              <button
+                onClick={() => setShowProfile(true)}
+                className="flex items-center space-x-2 px-5 py-2 text-sm font-medium transition-colors text-white hover:text-primary-200"
+              >
+                <User className="h-4 w-4 text-white" />
+                <span>Mon profil</span>
+              </button>
+              <UserDropdowns />
             </div>
 
             {/* User Menu */}
@@ -226,8 +239,7 @@ const Dashboard = () => {
                 )}
               </div>
 
-              {/* User Dropdowns */}
-              <UserDropdowns user={user} onShowProfile={() => setShowProfile(true)} />
+
               
               {/* User Profile */}
               <UserProfile user={user} onLogout={logout} onShowProfile={() => setShowProfile(true)} />
@@ -243,15 +255,18 @@ const Dashboard = () => {
             <HeroSection
               user={user}
               onShowServices={() => setShowServices(true)}
-              onShowHealthTips={() => setShowHealthTips(true)}
+              onShowHealthTips={() => setShowModernHealthTips(true)}
               onShowPharmacyContact={() => setShowPharmacyContact(true)}
+              onShowProducts={() => setActiveTab('produits')}
+              onShowPromos={() => setShowPromos(true)}
             />
           </>
         )}
 
         {activeTab === 'produits' ? (
           <ProductsGrid />
-        ) : (
+
+        ) : activeTab === 'accueil' ? (
           <div className="flex justify-center">
             <div className="w-full max-w-6xl space-y-8">
               {/* Section d'accueil de pharmacie interactive */}
@@ -290,7 +305,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        )}
+        ) : null}
       </main>
 
       {/* Cart Drawer */}
@@ -308,6 +323,18 @@ const Dashboard = () => {
       <HealthTipsModal 
         isOpen={showHealthTips}
         onClose={() => setShowHealthTips(false)}
+      />
+      
+      {/* Modern Health Tips Modal */}
+      <ModernHealthTipsModal 
+        isOpen={showModernHealthTips}
+        onClose={() => setShowModernHealthTips(false)}
+      />
+      
+      {/* Promo Page */}
+      <PromoPage 
+        isOpen={showPromos}
+        onClose={() => setShowPromos(false)}
       />
 
       {/* Pharmacy Contact Modal */}

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, FileText, Image, X, Check, AlertCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
+import apiService from '../services/api.jsx';
 
 const PrescriptionUpload = () => {
   const { user } = useAuth();
@@ -10,7 +11,7 @@ const PrescriptionUpload = () => {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const fileInputRef = useRef(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || '';
+
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -61,63 +62,24 @@ const PrescriptionUpload = () => {
     setUploading(true);
     
     try {
-      // Créer FormData pour l'upload
-      const formData = new FormData();
-      uploadedFiles.forEach((file, index) => {
-        formData.append(`prescriptions`, file);
-      });
-      
-      // Ajouter les métadonnées
-      formData.append('clientId', user?._id || 'anonymous');
-      formData.append('clientName', user ? `${user.prenom} ${user.nom}` : 'Client anonyme');
-      formData.append('uploadDate', new Date().toISOString());
-      
-      // Envoyer les fichiers au backend
-      const response = await fetch('/api/prescriptions/upload', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      });
-      
-      if (response.ok) {
-        const uploadResult = await response.json();
+      // Envoyer chaque fichier séparément
+      for (const file of uploadedFiles) {
+        const formData = new FormData();
+        formData.append('prescription', file);
         
-        // Envoyer notification à l'admin avec les détails de l'ordonnance
-        await fetch('/api/notifications', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-          },
-          body: JSON.stringify({
-            type: 'prescription',
-            title: 'Nouvelle ordonnance reçue',
-            message: `${user ? `${user.prenom} ${user.nom}` : 'Un client'} a envoyé une ordonnance à valider`,
-            targetRole: 'admin',
-            data: {
-              prescriptionId: uploadResult.data?._id || uploadResult._id,
-              clientId: user?._id,
-              clientName: user ? `${user.prenom} ${user.nom}` : 'Client anonyme',
-              clientEmail: user?.email,
-              fileCount: uploadedFiles.length,
-              uploadDate: new Date().toISOString(),
-              status: 'pending'
-            }
-          })
-        });
-        
-        setUploadSuccess(true);
-        
-        // Show success message for 5 seconds
-        setTimeout(() => {
-          setUploadSuccess(false);
-          setUploadedFiles([]);
-        }, 5000);
-      } else {
-        throw new Error('Erreur lors de l\'upload');
+        // Utiliser apiService pour envoyer le fichier
+        const result = await apiService.submitPrescription(formData);
+        console.log('✅ Ordonnance envoyée:', result);
       }
+      
+      setUploadSuccess(true);
+      
+      // Show success message for 5 seconds
+      setTimeout(() => {
+        setUploadSuccess(false);
+        setUploadedFiles([]);
+      }, 5000);
+      
     } catch (error) {
       console.error('Erreur lors de l\'upload:', error);
       alert('Erreur lors de l\'envoi de l\'ordonnance. Veuillez réessayer.');

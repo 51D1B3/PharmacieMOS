@@ -2,9 +2,28 @@ import React, { useState } from 'react';
 import { X, Upload, Plus, Minus } from 'lucide-react';
 import apiService from '../services/api';
 
-const NewProductModal = ({ onClose, onProductCreated }) => {
+const NewProductModal = ({ onClose, onProductCreated, editingProduct }) => {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(editingProduct ? {
+    name: editingProduct.name || '',
+    brand: editingProduct.brand || '',
+    dosage: editingProduct.dosage || '',
+    form: editingProduct.form || 'comprimé',
+    sku: editingProduct.sku || '',
+    barcode: editingProduct.barcode || '',
+    description: editingProduct.description || '',
+    category: editingProduct.category || '',
+    supplierId: editingProduct.supplierId || '',
+    priceHT: editingProduct.priceHT || '',
+    taxRate: editingProduct.taxRate || 0,
+    stock: {
+      onHand: editingProduct.stock?.onHand || 0,
+      thresholdAlert: editingProduct.stock?.thresholdAlert || 10
+    },
+    isPrescriptionRequired: editingProduct.isPrescriptionRequired || false,
+    expiryDate: editingProduct.expiryDate ? editingProduct.expiryDate.split('T')[0] : '',
+    tags: editingProduct.tags || []
+  } : {
     name: '',
     brand: '',
     dosage: '',
@@ -94,7 +113,11 @@ const NewProductModal = ({ onClose, onProductCreated }) => {
         formDataToSend.append('image', image);
       }
 
-      await apiService.createProduct(formDataToSend);
+      if (editingProduct) {
+        await apiService.updateProduct(editingProduct._id, formDataToSend);
+      } else {
+        await apiService.createProduct(formDataToSend);
+      }
       onProductCreated();
     } catch (error) {
       console.error('Erreur lors de la création du produit:', error);
@@ -108,7 +131,9 @@ const NewProductModal = ({ onClose, onProductCreated }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Ajouter un nouveau produit</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            {editingProduct ? 'Modifier le produit' : 'Ajouter un nouveau produit'}
+          </h3>
           <button
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
@@ -401,7 +426,7 @@ const NewProductModal = ({ onClose, onProductCreated }) => {
               disabled={loading}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Création...' : 'Créer le produit'}
+              {loading ? (editingProduct ? 'Modification...' : 'Création...') : (editingProduct ? 'Modifier le produit' : 'Créer le produit')}
             </button>
           </div>
         </form>

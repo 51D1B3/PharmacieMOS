@@ -1,5 +1,8 @@
 import express from 'express';
 import Joi from 'joi';
+import multer from 'multer';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import {
   register,
   login,
@@ -15,6 +18,30 @@ import {
 } from '../controllers/authController.js';
 import { authGuard, refreshTokenGuard } from '../middleware/authGuard.js';
 import { validateBody } from '../middleware/errorHandler.js';
+
+// Configuration Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
+// Configuration multer avec Cloudinary pour les photos de profil
+const profileStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'pharmacie/profiles',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 300, height: 300, crop: 'fill' }]
+  },
+});
+
+const upload = multer({
+  storage: profileStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB
+  }
+});
 
 const router = express.Router();
 
@@ -192,7 +219,7 @@ router.get('/verify-email/:token', verifyEmail);
 // Routes protégées
 router.post('/logout', authGuard, logout);
 router.get('/me', authGuard, getMe);
-router.put('/me', authGuard, validateBody(updateMeSchema), updateMe);
+router.put('/me', authGuard, upload.single('profileImage'), updateMe);
 router.put('/change-password', authGuard, validateBody(changePasswordSchema), changePassword);
 router.post('/resend-verification', authGuard, resendVerification);
 

@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { X, User, Mail, Phone, MapPin, Calendar, Heart, Shield, Edit, Save, Camera } from 'lucide-react';
+import apiService from '../services/api';
 
 const ProfilePage = ({ user, onClose, onUpdateUser }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     nom: user?.nom || '',
     prenom: user?.prenom || '',
@@ -52,6 +55,43 @@ const ProfilePage = ({ user, onClose, onUpdateUser }) => {
     }
   };
 
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Veuillez sélectionner une image valide');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('L\'image ne doit pas dépasser 5MB');
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      
+      const formData = new FormData();
+      formData.append('profileImage', file);
+      
+      const updatedUser = await apiService.updateProfile(formData);
+      await onUpdateUser(updatedUser);
+      
+      console.log('Photo de profil mise à jour avec succès');
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la photo:', error);
+      alert('Erreur lors de la mise à jour de la photo de profil');
+    } finally {
+      setUploadingPhoto(false);
+      event.target.value = '';
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -69,11 +109,11 @@ const ProfilePage = ({ user, onClose, onUpdateUser }) => {
         <div className="p-6 space-y-8">
           {/* Photo de profil */}
           <div className="flex flex-col items-center space-y-4">
-            <div className="relative">
+            <div className="relative group">
               <div className="h-32 w-32 rounded-full overflow-hidden border-4 border-primary-500 shadow-lg">
                 {user?.profileImage ? (
                   <img 
-                    src={user.profileImage.startsWith('http') ? user.profileImage : `${import.meta.env.VITE_API_URL || ''}${user.profileImage}`}
+                    src={user.profileImage}
                     alt={`${user.prenom} ${user.nom}`}
                     className="w-full h-full object-cover"
                   />
@@ -82,8 +122,28 @@ const ProfilePage = ({ user, onClose, onUpdateUser }) => {
                     <User className="h-16 w-16 text-primary-600" />
                   </div>
                 )}
+                
+                {/* Overlay pour changer la photo */}
+                <div 
+                  onClick={handlePhotoClick}
+                  className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center cursor-pointer transition-all duration-200"
+                >
+                  <Camera className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                </div>
+                
+                {/* Indicateur de chargement */}
+                {uploadingPhoto && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></div>
+                  </div>
+                )}
               </div>
-              <button className="absolute bottom-0 right-0 bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-full shadow-lg transition-colors">
+              
+              <button 
+                onClick={handlePhotoClick}
+                disabled={uploadingPhoto}
+                className="absolute bottom-0 right-0 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white p-2 rounded-full shadow-lg transition-colors"
+              >
                 <Camera className="h-4 w-4" />
               </button>
             </div>
@@ -368,6 +428,15 @@ const ProfilePage = ({ user, onClose, onUpdateUser }) => {
           </div>
         </div>
       </div>
+      
+      {/* Input caché pour sélectionner les fichiers */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoChange}
+        className="hidden"
+      />
     </div>
   );
 };

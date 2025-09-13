@@ -3,6 +3,7 @@ import { Search, Package, AlertTriangle, Eye, Edit, Trash2, Plus, Filter } from 
 import apiService from '../services/api.jsx';
 import { formatPrice } from '../services/priceFormatter';
 import { getProductImageUrl } from '../utils/imageUtils';
+import NewProductModal from './NewProductModal.jsx';
 
 const AdminProductsManager = () => {
   const [products, setProducts] = useState([]);
@@ -12,6 +13,8 @@ const AdminProductsManager = () => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [stockFilter, setStockFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
+  const [showNewProductModal, setShowNewProductModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   useEffect(() => {
     loadProducts();
@@ -92,6 +95,29 @@ const AdminProductsManager = () => {
     return { status: 'good', label: 'En stock', color: 'bg-green-100 text-green-800' };
   };
 
+  const handleEditProduct = (product) => {
+    setEditingProduct(product);
+    setShowNewProductModal(true);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+      try {
+        await apiService.deleteProduct(productId);
+        await loadProducts();
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        alert('Erreur lors de la suppression du produit');
+      }
+    }
+  };
+
+  const handleProductCreated = () => {
+    setShowNewProductModal(false);
+    setEditingProduct(null);
+    loadProducts();
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
       <div className="flex items-center justify-between mb-6">
@@ -102,7 +128,10 @@ const AdminProductsManager = () => {
             <p className="text-gray-600">{filteredProducts.length} produit{filteredProducts.length > 1 ? 's' : ''} affiché{filteredProducts.length > 1 ? 's' : ''}</p>
           </div>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+        <button 
+          onClick={() => setShowNewProductModal(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+        >
           <Plus className="h-4 w-4" />
           <span>Nouveau produit</span>
         </button>
@@ -217,20 +246,14 @@ const AdminProductsManager = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-12 w-12">
-                          {product.image ? (
-                            <img
-                              className="h-12 w-12 rounded-lg object-cover"
-                              src={getProductImageUrl(product.image, product.name)}
-                              alt={product.name}
-                              onError={(e) => {
-                                e.target.src = `https://via.placeholder.com/100x100.png/f3f4f6/9ca3af?text=${encodeURIComponent(product.name?.substring(0, 2) || 'PR')}`;
-                              }}
-                            />
-                          ) : (
-                            <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                              <Package className="h-6 w-6 text-gray-400" />
-                            </div>
-                          )}
+                          <img
+                            className="h-12 w-12 rounded-lg object-cover border border-gray-200"
+                            src={getProductImageUrl(product.image || product.images?.[0], product.name)}
+                            alt={product.name}
+                            onError={(e) => {
+                              e.target.src = `https://via.placeholder.com/100x100.png/f3f4f6/9ca3af?text=${encodeURIComponent(product.name?.substring(0, 2) || 'PR')}`;
+                            }}
+                          />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">{product.name}</div>
@@ -263,13 +286,25 @@ const AdminProductsManager = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
-                        <button className="text-blue-600 hover:text-blue-900 p-1 rounded">
+                        <button 
+                          onClick={() => alert('Fonctionnalité de visualisation à implémenter')}
+                          className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                          title="Voir les détails"
+                        >
                           <Eye className="h-4 w-4" />
                         </button>
-                        <button className="text-green-600 hover:text-green-900 p-1 rounded">
+                        <button 
+                          onClick={() => handleEditProduct(product)}
+                          className="text-green-600 hover:text-green-900 p-1 rounded"
+                          title="Modifier"
+                        >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="text-red-600 hover:text-red-900 p-1 rounded">
+                        <button 
+                          onClick={() => handleDeleteProduct(product._id)}
+                          className="text-red-600 hover:text-red-900 p-1 rounded"
+                          title="Supprimer"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
@@ -346,6 +381,18 @@ const AdminProductsManager = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de création/modification de produit */}
+      {showNewProductModal && (
+        <NewProductModal 
+          onClose={() => {
+            setShowNewProductModal(false);
+            setEditingProduct(null);
+          }}
+          onProductCreated={handleProductCreated}
+          editingProduct={editingProduct}
+        />
+      )}
     </div>
   );
 };

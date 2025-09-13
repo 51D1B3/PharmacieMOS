@@ -243,9 +243,32 @@ const updateMe = asyncHandler(async (req, res, next) => {
   if (prenom) updateFields.prenom = prenom;
   if (telephone) updateFields.telephone = telephone;
   if (sexe) updateFields.sexe = sexe;
-  if (adresse) updateFields.adresse = adresse;
-  if (informationsMedicales) updateFields.informationsMedicales = informationsMedicales;
-  if (preferences) updateFields.preferences = preferences;
+  if (adresse) {
+    try {
+      updateFields.adresse = typeof adresse === 'string' ? JSON.parse(adresse) : adresse;
+    } catch {
+      updateFields.adresse = adresse;
+    }
+  }
+  if (informationsMedicales) {
+    try {
+      updateFields.informationsMedicales = typeof informationsMedicales === 'string' ? JSON.parse(informationsMedicales) : informationsMedicales;
+    } catch {
+      updateFields.informationsMedicales = informationsMedicales;
+    }
+  }
+  if (preferences) {
+    try {
+      updateFields.preferences = typeof preferences === 'string' ? JSON.parse(preferences) : preferences;
+    } catch {
+      updateFields.preferences = preferences;
+    }
+  }
+
+  // Gérer l'upload de photo de profil avec Cloudinary
+  if (req.file) {
+    updateFields.profileImage = req.file.path; // Cloudinary URL
+  }
 
   const user = await User.findByIdAndUpdate(
     req.userId,

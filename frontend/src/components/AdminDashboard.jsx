@@ -5,7 +5,7 @@ import {
   BarChart3, Package, AlertTriangle, Calendar, 
   Users, FileText,
   DollarSign, Settings, LogOut, User,
-  Bell, ChevronDown, TrendingUp
+  Bell, ChevronDown, TrendingUp, Clipboard
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import AdminProductAlerts from './AdminProductAlerts.jsx';
@@ -18,6 +18,7 @@ import AdminChatNotification from './AdminChatNotification.jsx';
 import AdminCashSale from './AdminCashSale.jsx';
 import AdminDailySales from './AdminDailySales.jsx';
 import AdminProductsManager from './AdminProductsManager.jsx';
+import AdminPrescriptionsManager from './AdminPrescriptionsManager.jsx';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -196,6 +197,7 @@ const AdminDashboard = () => {
         <div className="mb-8 border-b border-gray-200 dark:border-gray-700"><nav className="-mb-px flex space-x-4 overflow-x-auto">
             <TabButton id="overview" label="Vue d'ensemble" icon={BarChart3} active={activeTab === 'overview'} onClick={setActiveTab} />
             <TabButton id="products" label="Produits" icon={Package} active={activeTab === 'products'} onClick={setActiveTab} />
+            <TabButton id="prescriptions" label="Ordonnances" icon={Clipboard} active={activeTab === 'prescriptions'} onClick={setActiveTab} />
             <TabButton id="alerts" label="Alertes" icon={AlertTriangle} active={activeTab === 'alerts'} onClick={setActiveTab} />
             <TabButton id="clients" label="Clients" icon={Users} active={activeTab === 'clients'} onClick={setActiveTab} />
             <TabButton id="suppliers" label="Fournisseurs" icon={Package} active={activeTab === 'suppliers'} onClick={setActiveTab} />
@@ -212,7 +214,7 @@ const AdminDashboard = () => {
             </>
           )}
           {activeTab === 'alerts' && <AdminProductAlerts />}
-          {activeTab === 'reservations' && <AdminReservationsManager />}
+          {activeTab === 'prescriptions' && <AdminPrescriptionsManager />}
           {activeTab === 'clients' && <AdminClientsManager />}
           {activeTab === 'suppliers' && <AdminSuppliersManager />}
           {activeTab === 'invoices' && <AdminInvoicesManager />}

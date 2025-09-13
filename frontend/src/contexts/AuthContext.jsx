@@ -35,19 +35,32 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     };
 
-    // Clear session when window is closed
-    const handleBeforeUnload = () => {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
+    // Clear session only when window is actually closed (not on refresh)
+    const handleBeforeUnload = (event) => {
+      // Ne supprimer les tokens que si c'est une vraie fermeture de fenêtre
+      // Pas lors d'un refresh ou navigation
+      if (event.type === 'beforeunload' && !event.returnValue) {
+        // Seulement si l'utilisateur ferme vraiment la fenêtre
+        return;
+      }
+    };
+
+    // Utiliser visibilitychange pour détecter la fermeture réelle
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        // L'onglet devient caché, mais ne pas supprimer les tokens
+        return;
+      }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     initializeAuth();
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
@@ -121,10 +134,14 @@ export const AuthProvider = ({ children }) => {
 
   const updateUser = async (userData) => {
     try {
+      console.log('Updating user with data:', userData);
       const updatedUser = await apiService.updateProfile(userData);
+      console.log('Updated user received:', updatedUser);
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
     } catch (error) {
+      console.error('Error updating user:', error);
       throw error;
     }
   };

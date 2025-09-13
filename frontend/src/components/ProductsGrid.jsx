@@ -83,7 +83,9 @@ const ProductsGrid = () => {
   const loadCategories = async () => {
     try {
       const response = await apiService.getCategories();
+      console.log('Réponse catégories:', response);
       const fetchedCategories = Array.isArray(response) ? response : [];
+      console.log('Catégories chargées:', fetchedCategories);
       setCategories(fetchedCategories);
     } catch (error) {
       console.error('Erreur lors du chargement des catégories:', error);
@@ -147,9 +149,9 @@ const ProductsGrid = () => {
         <p className="text-gray-600 dark:text-gray-300">{products.length} produits disponibles</p>
       </div>
 
-      {/* Barre de recherche */}
+      {/* Barre de recherche et filtres */}
       <div className="mb-6">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 mb-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
@@ -160,122 +162,195 @@ const ProductsGrid = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             />
           </div>
-          {searchTerm && (
-            <div className="text-sm text-gray-600 dark:text-gray-300">
-              {products.length} résultat{products.length > 1 ? 's' : ''} pour "{searchTerm}"
-            </div>
-          )}
+          <button
+            onClick={() => setShowCategoryFilter(!showCategoryFilter)}
+            className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            <Filter className="h-4 w-4" />
+            <span>Filtrer</span>
+            <ChevronDown className={`h-4 w-4 transition-transform ${showCategoryFilter ? 'rotate-180' : ''}`} />
+          </button>
         </div>
+        
+        {/* Filtres déroulants */}
+        {showCategoryFilter && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Catégorie</label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => {
+                    setSelectedCategory(e.target.value);
+                    setSelectedSubCategory('');
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                >
+                  <option value="">Toutes les catégories</option>
+                  {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {selectedCategory && categories.find(cat => cat._id === selectedCategory)?.children?.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sous-catégorie</label>
+                  <select
+                    value={selectedSubCategory}
+                    onChange={(e) => setSelectedSubCategory(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  >
+                    <option value="">Toutes les sous-catégories</option>
+                    {categories.find(cat => cat._id === selectedCategory)?.children?.map((subCategory) => (
+                      <option key={subCategory._id} value={subCategory._id}>
+                        {subCategory.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+            
+            {(selectedCategory || selectedSubCategory || searchTerm) && (
+              <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  {products.length} produit{products.length > 1 ? 's' : ''} trouvé{products.length > 1 ? 's' : ''}
+                </div>
+                <button
+                  onClick={resetFilters}
+                  className="text-sm text-red-600 hover:text-red-700 flex items-center space-x-1"
+                >
+                  <X className="h-4 w-4" />
+                  <span>Réinitialiser</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Filtres par catégories */}
-  <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-            <Filter className="h-5 w-5 mr-2 text-primary-600" />
-            Filtrer par catégorie
-          </h3>
-          {(selectedCategory || selectedSubCategory || searchTerm) && (
+      {/* Affichage moderne des catégories */}
+      {!selectedCategory && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
+              <Package className="h-6 w-6 mr-2 text-primary-600" />
+              Catégories
+            </h3>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="text-sm text-red-600 hover:text-red-700 flex items-center space-x-1"
+              >
+                <X className="h-4 w-4" />
+                <span>Effacer recherche</span>
+              </button>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            {categories.map((category) => {
+              const categoryProducts = allProducts.filter(product => 
+                product.category === category._id || product.categoryId === category._id ||
+                (category.children && category.children.some(child => 
+                  product.category === child._id || product.categoryId === child._id
+                ))
+              );
+              
+              return (
+                <div
+                  key={category._id}
+                  onClick={() => {
+                    setSelectedCategory(category._id);
+                    setSelectedSubCategory('');
+                  }}
+                  className="group cursor-pointer bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:border-primary-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  <div className="text-center">
+                    <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Package className="h-6 w-6 text-white" />
+                    </div>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                      {category.name}
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {categoryProducts.length} produit{categoryProducts.length > 1 ? 's' : ''}
+                    </p>
+                    {category.children && category.children.length > 0 && (
+                      <p className="text-xs text-primary-600 dark:text-primary-400 mt-1">
+                        {category.children.length} sous-catégorie{category.children.length > 1 ? 's' : ''}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Filtres par catégories - Version compacte quand une catégorie est sélectionnée */}
+      {selectedCategory && (
+        <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+              <Filter className="h-5 w-5 mr-2 text-primary-600" />
+              Filtres actifs
+            </h3>
             <button
               onClick={resetFilters}
               className="text-sm text-red-600 hover:text-red-700 flex items-center space-x-1"
             >
               <X className="h-4 w-4" />
-              <span>Réinitialiser</span>
+              <span>Tout afficher</span>
             </button>
-          )}
-        </div>
-
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Sélection de catégorie principale */}
-          <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-              Catégorie principale
-            </label>
-            <div className="relative">
-              <button
-                onClick={() => setShowCategoryFilter(!showCategoryFilter)}
-                className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 text-left flex items-center justify-between hover:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
-              >
-                <span className="text-gray-900 dark:text-gray-100">
-                  {selectedCategory ? 
-                    categories.find(cat => cat._id === selectedCategory)?.name : 
-                    'Sélectionner une catégorie'
-                  }
-                </span>
-                <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${showCategoryFilter ? 'rotate-180' : ''}`} />
-              </button>
-              
-              {showCategoryFilter && (
-                <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                  <button
-                    onClick={() => {
-                      setSelectedCategory('');
-                      setSelectedSubCategory('');
-                      setShowCategoryFilter(false);
-                    }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200"
-                  >
-                    Toutes les catégories
-                  </button>
-                  {categories.map((category) => (
-                    <button
-                      key={category._id}
-                      onClick={() => {
-                        setSelectedCategory(category._id);
-                        setSelectedSubCategory('');
-                        setShowCategoryFilter(false);
-                      }}
-                      className={`w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                        selectedCategory === category._id ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-200'
-                      }`}
-                    >
-                      {category.name}
-                      {category.children && category.children.length > 0 && (
-                        <span className="text-xs text-gray-500 ml-2">
-                          ({category.children.length} sous-catégories)
-                        </span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
 
-          {/* Sélection de sous-catégorie */}
-          {selectedCategory && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                Sous-catégorie
-              </label>
-              <select
-                value={selectedSubCategory}
-                onChange={(e) => setSelectedSubCategory(e.target.value)}
-                className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-gray-100"
+          <div className="flex flex-wrap gap-3">
+            {/* Catégorie sélectionnée */}
+            <div className="flex items-center bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 px-3 py-2 rounded-full text-sm">
+              <span className="font-medium">{categories.find(cat => cat._id === selectedCategory)?.name}</span>
+              <button
+                onClick={() => {
+                  setSelectedCategory('');
+                  setSelectedSubCategory('');
+                }}
+                className="ml-2 hover:bg-primary-200 dark:hover:bg-primary-800 rounded-full p-1"
               >
-                <option value="">Toutes les sous-catégories</option>
-                {categories
-                  .find(cat => cat._id === selectedCategory)
-                  ?.children?.map((subCategory) => (
-                    <option key={subCategory._id} value={subCategory._id}>
-                      {subCategory.name}
-                    </option>
-                  ))}
-              </select>
+                <X className="h-3 w-3" />
+              </button>
             </div>
-          )}
-        </div>
 
-        {/* Affichage du filtre actuel */}
-        {(selectedCategory || selectedSubCategory) && (
+            {/* Sous-catégories disponibles */}
+            {categories.find(cat => cat._id === selectedCategory)?.children?.map((subCategory) => {
+              const isSelected = selectedSubCategory === subCategory._id;
+              return (
+                <button
+                  key={subCategory._id}
+                  onClick={() => setSelectedSubCategory(isSelected ? '' : subCategory._id)}
+                  className={`px-3 py-2 rounded-full text-sm transition-colors ${
+                    isSelected
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border-2 border-green-500'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  {subCategory.name}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Affichage du filtre actuel */}
           <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
             <p className="text-sm text-primary-700 dark:text-primary-300">
-              <strong>Filtre actuel:</strong> {getSelectedCategoryName()}
+              <strong>Affichage:</strong> {getSelectedCategoryName()} ({products.length} produit{products.length > 1 ? 's' : ''})
             </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => {

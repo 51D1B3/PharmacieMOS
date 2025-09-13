@@ -173,11 +173,7 @@ export const createProduct = asyncHandler(async (req, res) => {
 
     let imagePath = image;
     if (req.file) {
-        imagePath = `/uploads/products/${req.file.filename}`;
-    }
-
-    if (!imagePath) {
-        throw new AppError("L'image du produit est requrise.", 400);
+        imagePath = req.file.path; // Cloudinary URL
     }
 
     if (await Product.findOne({ sku })) {
@@ -256,7 +252,7 @@ export const updateProduct = asyncHandler(async (req, res) => {
     const updateData = { ...req.body };
 
     if (req.file) {
-        updateData.image = `/uploads/products/${req.file.filename}`;
+        updateData.image = req.file.path; // Cloudinary URL
     }
 
     Object.assign(product, updateData);

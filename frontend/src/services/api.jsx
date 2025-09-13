@@ -184,8 +184,16 @@ class ApiService {
   }
 
   async updateProfile(userData) {
-    const response = await this.api.put('/users/profile', userData);
-    return response.data.data;
+    const headers = {};
+    
+    // Si c'est un FormData (pour l'upload de fichiers), ne pas définir Content-Type
+    if (!(userData instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+    
+    const response = await this.api.put('/auth/me', userData, { headers });
+    console.log('Update profile response:', response.data);
+    return response.data.data?.user || response.data.user || response.data.data;
   }
 
   // Utilisateurs (pour admin)
@@ -225,6 +233,59 @@ class ApiService {
       console.error('Error fetching notifications:', error);
       return [];
     }
+  }
+
+  // Prescriptions
+  async submitPrescription(file) {
+    const formData = new FormData();
+    formData.append('prescription', file);
+    
+    const response = await this.api.post('/prescriptions', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  }
+
+  async getMyPrescriptions() {
+    try {
+      const response = await this.api.get('/prescriptions/my');
+      return response.data.data || response.data || [];
+    } catch (error) {
+      console.error('Error fetching prescriptions:', error);
+      return [];
+    }
+  }
+
+  async getAllPrescriptions() {
+    try {
+      const response = await this.api.get('/prescriptions/all');
+      return response.data.data || response.data || [];
+    } catch (error) {
+      console.error('Error fetching all prescriptions:', error);
+      return [];
+    }
+  }
+
+  async updatePrescriptionStatus(prescriptionId, status) {
+    const response = await this.api.put(`/prescriptions/${prescriptionId}/status`, { status });
+    return response.data;
+  }
+
+  // Gestion des produits
+  async deleteProduct(productId) {
+    const response = await this.api.delete(`/products/${productId}`);
+    return response.data;
+  }
+
+  async updateProduct(productId, productData) {
+    const response = await this.api.put(`/products/${productId}`, productData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
   }
 }
 
