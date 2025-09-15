@@ -1,7 +1,7 @@
 import axios from 'axios';
 // import { mockProducts, mockReservations, mockUser, simulateApiDelay, simulateApiError } from '../data/mockData';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api';
+const API_BASE_URL = 'http://localhost:5005/api';
 
 class ApiService {
   api;

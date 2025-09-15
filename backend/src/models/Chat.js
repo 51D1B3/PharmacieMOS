@@ -14,10 +14,25 @@ const chatSchema = new mongoose.Schema({
   },
   
   // Contenu du message
-  content: {
+  message: {
     type: String,
     required: true,
     maxlength: [2000, 'Le message ne peut pas dépasser 2000 caractères']
+  },
+  
+  // Indicateur de modification
+  edited: {
+    type: Boolean,
+    default: false
+  },
+  
+  // Date de modification
+  editedAt: Date,
+  
+  // Horodatage
+  timestamp: {
+    type: Date,
+    default: Date.now
   },
   
   // Type de message
@@ -180,6 +195,12 @@ chatSchema.pre('save', function(next) {
   // Marquer comme livré si le statut change
   if (this.isModified('isDelivered') && this.isDelivered && !this.deliveredAt) {
     this.deliveredAt = new Date();
+  }
+  
+  // Marquer la date d'édition
+  if (this.isModified('message') && !this.isNew) {
+    this.edited = true;
+    this.editedAt = new Date();
   }
   
   next();

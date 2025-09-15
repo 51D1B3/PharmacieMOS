@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ShoppingCart, Bell, Calendar, Phone, Info, Heart, Home, Package, User, Settings } from 'lucide-react';
+import { ShoppingCart, Bell, Calendar, Phone, Info, Heart, Home, Package, User, Settings, MessageSquare } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { useCart } from '../contexts/CartContext.jsx';
 import apiService from '../services/api.jsx';
 import CartDrawer from './CartDrawer.jsx';
 import ClientChatWidget from './ClientChatWidget.jsx';
+import ClientChat from './ClientChat.jsx';
 import HeroSection from './HeroSection.jsx';
 import UserProfile from './UserProfile.jsx';
 import UserDropdowns from './UserDropdowns.jsx';
@@ -17,7 +18,8 @@ import PromoPage from './PromoPage.jsx';
 import PharmacyContactModal from './PharmacyContactModal.jsx';
 import ServicesModal from './ServicesModal.jsx';
 
-import PrescriptionUpload from './PrescriptionUpload.jsx';
+import ModernPrescriptionUpload from './ModernPrescriptionUpload.jsx';
+import ClientPrescriptionNotifications from './ClientPrescriptionNotifications.jsx';
 import PaymentModal from './PaymentModal.jsx';
 import PharmacyInfoModal from './PharmacyInfoModal.jsx';
 import PriceDisplayDemo from './PriceDisplayDemo.jsx';
@@ -165,7 +167,13 @@ const Dashboard = () => {
 
             {/* User Menu */}
             <div className="flex items-center space-x-6">
-
+              {/* Chat */}
+              <button
+                onClick={() => setShowChat(true)}
+                className="relative p-2 text-gray-400 dark:text-gray-300 hover:text-gray-500 dark:hover:text-white transition-colors"
+              >
+                <MessageSquare className="h-6 w-6" />
+              </button>
               
               {/* Cart */}
               <button
@@ -281,7 +289,12 @@ const Dashboard = () => {
               <div className="flex flex-col items-center space-y-10">
                 {/* Section de téléchargement d'ordonnance */}
                 <div className="w-full max-w-5xl">
-                  <PrescriptionUpload />
+                  <ModernPrescriptionUpload />
+                </div>
+                
+                {/* Section notifications ordonnances */}
+                <div className="w-full max-w-5xl">
+                  <ClientPrescriptionNotifications />
                 </div>
                 
                 {/* Section rendez-vous en bas */}
@@ -317,7 +330,10 @@ const Dashboard = () => {
       />
 
       {/* Chat Widget */}
-      <ClientChatWidget predefinedMessage={chatPredefinedMessage} isOpen={showChat} onClose={() => setShowChat(false)} />
+      <ClientChatWidget predefinedMessage={chatPredefinedMessage} isOpen={false} onClose={() => {}} />
+      
+      {/* Client Chat */}
+      <ClientChat isOpen={showChat} onClose={() => setShowChat(false)} />
       
       {/* Health Tips Modal */}
       <HealthTipsModal 

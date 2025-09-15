@@ -14,14 +14,12 @@ const ProductsGrid = () => {
   const [favorites, setFavorites] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
-  const API_URL = process.env.REACT_APP_API_URL;
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const filterProducts = React.useCallback(() => {
     let filtered = [...allProducts];
     
-    // Filtrer par recherche
     if (searchTerm) {
       filtered = filtered.filter(product => 
         product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -32,13 +30,11 @@ const ProductsGrid = () => {
     
     if (selectedCategory) {
       if (selectedSubCategory) {
-        // Filtrer par sous-catégorie
         filtered = filtered.filter(product => 
           product.category === selectedSubCategory ||
           product.categoryId === selectedSubCategory
         );
       } else {
-        // Filtrer par catégorie principale et ses sous-catégories
         const categoryWithChildren = categories.find(cat => cat._id === selectedCategory);
         const categoryIds = [selectedCategory];
         if (categoryWithChildren?.children) {
@@ -83,9 +79,7 @@ const ProductsGrid = () => {
   const loadCategories = async () => {
     try {
       const response = await apiService.getCategories();
-      console.log('Réponse catégories:', response);
       const fetchedCategories = Array.isArray(response) ? response : [];
-      console.log('Catégories chargées:', fetchedCategories);
       setCategories(fetchedCategories);
     } catch (error) {
       console.error('Erreur lors du chargement des catégories:', error);
@@ -98,21 +92,6 @@ const ProductsGrid = () => {
     setSelectedSubCategory('');
     setShowCategoryFilter(false);
     setSearchTerm('');
-  };
-
-  const getSelectedCategoryName = () => {
-    if (selectedSubCategory) {
-      const parentCategory = categories.find(cat => 
-        cat.children?.some(child => child._id === selectedSubCategory)
-      );
-      const subCategory = parentCategory?.children?.find(child => child._id === selectedSubCategory);
-      return `${parentCategory?.name} > ${subCategory?.name}`;
-    }
-    if (selectedCategory) {
-      const category = categories.find(cat => cat._id === selectedCategory);
-      return category?.name;
-    }
-    return 'Toutes les catégories';
   };
 
   const toggleFavorite = (product) => {
@@ -143,7 +122,7 @@ const ProductsGrid = () => {
   }
 
   return (
-  <div className="mt-8 bg-white dark:bg-gray-900 rounded-xl p-2">
+    <div className="mt-8 bg-white dark:bg-gray-900 rounded-xl p-2">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Nos Produits</h2>
         <p className="text-gray-600 dark:text-gray-300">{products.length} produits disponibles</p>
@@ -292,66 +271,6 @@ const ProductsGrid = () => {
         </div>
       )}
 
-      {/* Filtres par catégories - Version compacte quand une catégorie est sélectionnée */}
-      {selectedCategory && (
-        <div className="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-              <Filter className="h-5 w-5 mr-2 text-primary-600" />
-              Filtres actifs
-            </h3>
-            <button
-              onClick={resetFilters}
-              className="text-sm text-red-600 hover:text-red-700 flex items-center space-x-1"
-            >
-              <X className="h-4 w-4" />
-              <span>Tout afficher</span>
-            </button>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            {/* Catégorie sélectionnée */}
-            <div className="flex items-center bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-200 px-3 py-2 rounded-full text-sm">
-              <span className="font-medium">{categories.find(cat => cat._id === selectedCategory)?.name}</span>
-              <button
-                onClick={() => {
-                  setSelectedCategory('');
-                  setSelectedSubCategory('');
-                }}
-                className="ml-2 hover:bg-primary-200 dark:hover:bg-primary-800 rounded-full p-1"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-
-            {/* Sous-catégories disponibles */}
-            {categories.find(cat => cat._id === selectedCategory)?.children?.map((subCategory) => {
-              const isSelected = selectedSubCategory === subCategory._id;
-              return (
-                <button
-                  key={subCategory._id}
-                  onClick={() => setSelectedSubCategory(isSelected ? '' : subCategory._id)}
-                  className={`px-3 py-2 rounded-full text-sm transition-colors ${
-                    isSelected
-                      ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border-2 border-green-500'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                  }`}
-                >
-                  {subCategory.name}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Affichage du filtre actuel */}
-          <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
-            <p className="text-sm text-primary-700 dark:text-primary-300">
-              <strong>Affichage:</strong> {getSelectedCategoryName()} ({products.length} produit{products.length > 1 ? 's' : ''})
-            </p>
-          </div>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map((product) => {
           const stockOnHand = product.stock?.onHand || 0;
@@ -433,11 +352,11 @@ const ProductsGrid = () => {
               {/* Contenu */}
               <div className="p-4">
                 <div className="mb-2">
-                  <p className="text-sm font-medium text-white group-hover:text-primary-400 transition-colors">{product.brand}</p>
-                  <h3 className="font-semibold text-white group-hover:text-primary-400 transition-colors line-clamp-2">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{product.brand}</p>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">
                     {product.name || product.nom}
                   </h3>
-                  <p className="text-sm text-white group-hover:text-primary-400 transition-colors">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {product.dosage} - {product.form}
                   </p>
                 </div>
@@ -464,20 +383,9 @@ const ProductsGrid = () => {
                 {/* Actions */}
                 <div className="flex space-x-2 mb-3">
                   <button
-                    onClick={e => {
-                      handleAddToCart(product);
-                      // Feedback visuel temporaire
-                      const btn = e.currentTarget;
-                      const originalText = btn.innerHTML;
-                      btn.innerHTML = '<span class="text-sm">✓ Ajouté</span>';
-                      btn.classList.add('bg-green-600');
-                      setTimeout(() => {
-                        btn.innerHTML = originalText;
-                        btn.classList.remove('bg-green-600');
-                      }, 1000);
-                    }}
+                    onClick={() => handleAddToCart(product)}
                     disabled={isOutOfStock}
-                        className="flex-1 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-3 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-1"
+                    className="flex-1 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-3 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-1"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     <span>Ajouter</span>
@@ -496,7 +404,7 @@ const ProductsGrid = () => {
                   </div>
                 </div>
 
-                <p className="text-xs text-white group-hover:text-primary-400 transition-colors mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                   Réf: {product.sku}
                 </p>
               </div>

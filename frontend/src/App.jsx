@@ -3,12 +3,15 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext.jsx';
 import { ChatProvider } from './contexts/ChatContext.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
+import { SocketProvider } from './contexts/SocketContext.jsx';
+import { NotificationProvider } from './contexts/NotificationContext.jsx';
 import LandingPage from './components/LandingPage.jsx';
 import AboutPage from './components/AboutPage.jsx';
 import LoginForm from './components/LoginForm.jsx';
 import RegisterForm from './components/RegisterForm.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import AdminDashboard from './components/AdminDashboard.jsx';
+import PharmacistDashboard from './components/PharmacistDashboard.jsx';
 import ProductsPage from './components/ProductsPage.jsx';
 
 // Composant de protection des routes
@@ -44,8 +47,10 @@ const PublicRoute = ({ children }) => {
 
   if (user) {
     // Redirect based on user role
-    if (user.role === 'admin' || user.role === 'pharmacist') {
+    if (user.role === 'admin') {
       return <Navigate to="/admin" replace />;
+    } else if (user.role === 'pharmacien') {
+      return <Navigate to="/pharmacist" replace />;
     }
     return <Navigate to="/dashboard" replace />;
   }
@@ -96,6 +101,14 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/pharmacist"
+        element={
+          <ProtectedRoute>
+            <PharmacistDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/products"
         element={
           <ProtectedRoute>
@@ -114,11 +127,15 @@ const App = () => {
   return (
     <Router future={{ v7_startTransition: true }}>
       <AuthProvider>
-        <CartProvider>
-          <ChatProvider>
-            <AppRoutes />
-          </ChatProvider>
-        </CartProvider>
+        <SocketProvider>
+          <NotificationProvider>
+            <CartProvider>
+              <ChatProvider>
+                <AppRoutes />
+              </ChatProvider>
+            </CartProvider>
+          </NotificationProvider>
+        </SocketProvider>
       </AuthProvider>
     </Router>
   );

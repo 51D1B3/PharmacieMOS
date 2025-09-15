@@ -1,5 +1,6 @@
 import Prescription from '../models/Prescription.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
+import { notifyAdmins, notifyClient } from '../socket/socketHandler.js';
 
 // @desc    Soumettre une nouvelle ordonnance
 // @route   POST /api/prescriptions
@@ -21,6 +22,16 @@ export const submitPrescription = asyncHandler(async (req, res) => {
   });
 
   console.log(`✅ Nouvelle ordonnance reçue de ${req.user.email} - ID: ${prescription._id}`);
+
+  // Notification temps réel aux admins
+  notifyAdmins({
+    id: prescription._id,
+    clientName: prescription.clientName,
+    clientEmail: prescription.clientEmail,
+    imageUrl: prescription.imageUrl,
+    submittedAt: prescription.submittedAt,
+    message: `Nouvelle ordonnance de ${prescription.clientName}`
+  });
 
   res.status(201).json({
     success: true,
@@ -93,6 +104,18 @@ export const updatePrescriptionStatus = asyncHandler(async (req, res) => {
   }
 
   console.log(`🔄 Ordonnance ${prescription._id} mise à jour: ${status}`);
+
+  // Notification temps réel au client
+  if (status === 'processed') {
+    notifyClient(prescription.clientId._id, {
+      prescriptionId: prescription._id,
+      status,
+      medications,
+      pharmacistNotes,
+      estimatedTotal,
+      message: `Votre ordonnance a été traitée`
+    });
+  }
 
   res.status(200).json({
     success: true,

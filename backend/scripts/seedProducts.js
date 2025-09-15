@@ -57,6 +57,7 @@ const seedProducts = async () => {
         category: category._id,
         supplierId: supplier._id,
         priceHT: 2500,
+        priceTTC: 2500,
         taxRate: 0,
         stock: {
           onHand: 150,
@@ -77,6 +78,7 @@ const seedProducts = async () => {
         category: category._id,
         supplierId: supplier._id,
         priceHT: 8500,
+        priceTTC: 8500,
         taxRate: 0,
         stock: {
           onHand: 75,
@@ -98,6 +100,7 @@ const seedProducts = async () => {
         category: category._id,
         supplierId: supplier._id,
         priceHT: 4200,
+        priceTTC: 4200,
         taxRate: 0,
         stock: {
           onHand: 200,
@@ -118,6 +121,7 @@ const seedProducts = async () => {
         category: category._id,
         supplierId: supplier._id,
         priceHT: 3200,
+        priceTTC: 3200,
         taxRate: 0,
         stock: {
           onHand: 5,
@@ -138,6 +142,7 @@ const seedProducts = async () => {
         category: category._id,
         supplierId: supplier._id,
         priceHT: 6800,
+        priceTTC: 6800,
         taxRate: 0,
         stock: {
           onHand: 0,

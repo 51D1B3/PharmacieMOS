@@ -16,7 +16,9 @@ const AdminPrescriptionsManager = () => {
     try {
       setLoading(true);
       const response = await apiService.getAllPrescriptions();
-      setPrescriptions(response || []);
+      // Vérifier la structure de la réponse
+      const prescriptionsData = response?.data?.prescriptions || response?.prescriptions || response || [];
+      setPrescriptions(Array.isArray(prescriptionsData) ? prescriptionsData : []);
     } catch (error) {
       console.error('Erreur lors du chargement des ordonnances:', error);
       setPrescriptions([]);
@@ -73,7 +75,7 @@ const AdminPrescriptionsManager = () => {
         </div>
       </div>
 
-      {prescriptions.length === 0 ? (
+      {!loading && prescriptions.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8 text-center">
           <Clipboard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
@@ -82,8 +84,14 @@ const AdminPrescriptionsManager = () => {
           <p className="text-gray-600 dark:text-gray-400">
             Les ordonnances envoyées par les clients apparaîtront ici.
           </p>
+          <button 
+            onClick={loadPrescriptions}
+            className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+          >
+            Actualiser
+          </button>
         </div>
-      ) : (
+      ) : prescriptions.length > 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -163,7 +171,7 @@ const AdminPrescriptionsManager = () => {
             </table>
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Modal de visualisation */}
       {showModal && selectedPrescription && (

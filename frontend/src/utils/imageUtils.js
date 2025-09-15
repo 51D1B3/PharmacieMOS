@@ -15,13 +15,18 @@ export const getProductImageUrl = (imageUrl, fallbackText = 'Produit') => {
     return `https://via.placeholder.com/400x400.png/f3f4f6/9ca3af?text=${encodeURIComponent(fallbackText)}`;
   }
   
-  // Si l'image est déjà une URL complète (Cloudinary)
+  // Si l'image est déjà une URL complète (Cloudinary ou autre)
   if (imageUrl.startsWith('http')) {
     return imageUrl;
   }
   
-  // Si c'est une image locale, construire l'URL avec l'API
-  return `${import.meta.env.VITE_API_URL || ''}${imageUrl}`;
+  // Si c'est juste un nom de fichier, construire l'URL Cloudinary ou locale
+  if (!imageUrl.startsWith('/')) {
+    return `http://localhost:5005/uploads/products/${imageUrl}`;
+  }
+  
+  // Si c'est une image locale avec chemin complet
+  return `http://localhost:5005${imageUrl}`;
 };
 
 /**
