@@ -375,11 +375,11 @@ const AboutPage = () => {
               <div className="space-y-2 text-gray-300">
                 <div className="flex items-center space-x-2">
                   <Phone className="h-4 w-4" />
-                  <span>+224 123 456 789</span>
+                  <span>+224 623 841 149</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4" />
-                  <span>contact@pharmacos.gn</span>
+                  <span>mahamadsidiboss@gmail.com</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4" />
@@ -390,7 +390,7 @@ const AboutPage = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Horaires</h3>
               <div className="space-y-2 text-gray-300">
-                <div>Lun - Ven: 8h00 - 20h00</div>
+                <div>Lun - Ven: 8h00 - 22h00</div>
                 <div>Samedi: 9h00 - 18h00</div>
                 <div>Dimanche: 10h00 - 16h00</div>
                 <div className="text-primary-400 font-medium">Service en ligne 24h/7j</div>
@@ -398,7 +398,7 @@ const AboutPage = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 PharmaMOS. Tous droits réservés.</p>
+            <p>&copy; 2025 PharmaMOS. Tous droits réservés.</p>
           </div>
         </div>
       </footer>

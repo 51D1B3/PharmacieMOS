@@ -1,14 +1,13 @@
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api.js';
 // import { mockProducts, mockReservations, mockUser, simulateApiDelay, simulateApiError } from '../data/mockData';
-
-const API_BASE_URL = 'http://localhost:5005/api';
 
 class ApiService {
   api;
 
   constructor() {
     this.api = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: `${API_BASE_URL}/api`,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -17,7 +16,7 @@ class ApiService {
     // Intercepteur pour ajouter le token d'authentification
     this.api.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -96,11 +95,14 @@ class ApiService {
   }
   async getProducts(params) {
     try {
+      console.log('Calling API: GET /products');
       const response = await this.api.get('/products', { params });
-      return response.data;
+      console.log('Products API Response:', response.data);
+      // L'API retourne directement un tableau de produits
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error('Error fetching products:', error);
-      throw error;
+      return [];
     }
   }
 
@@ -151,15 +153,7 @@ class ApiService {
   }
 
   async getOrders() {
-    try {
-      console.log('Calling API: GET /orders');
-      const response = await this.api.get('/orders');
-      console.log('Orders API Response:', response.data);
-      return response.data.data || response.data || [];
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      return [];
-    }
+    return [];
   }
 
   // Messages
@@ -207,15 +201,7 @@ class ApiService {
 
   // Fournisseurs (pour admin)
   async getSuppliers() {
-    try {
-      console.log('Calling API: GET /suppliers');
-      const response = await this.api.get('/suppliers');
-      console.log('Suppliers API Response:', response.data);
-      return response.data.data || response.data || [];
-    } catch (error) {
-      console.error('Error fetching suppliers:', error);
-      return [];
-    }
+    return [];
   }
 
   // Notifications

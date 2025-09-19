@@ -13,6 +13,9 @@ import Dashboard from './components/Dashboard.jsx';
 import AdminDashboard from './components/AdminDashboard.jsx';
 import PharmacistDashboard from './components/PharmacistDashboard.jsx';
 import ProductsPage from './components/ProductsPage.jsx';
+import PrivacyPolicy from './components/PrivacyPolicy.jsx';
+import TermsOfService from './components/TermsOfService.jsx';
+import Support from './components/Support.jsx';
 
 // Composant de protection des routes
 const ProtectedRoute = ({ children }) => {
@@ -64,6 +67,9 @@ const AppRoutes = () => {
       {/* Page d'accueil publique */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/terms-of-service" element={<TermsOfService />} />
+      <Route path="/support" element={<Support />} />
       
       {/* Routes publiques */}
       <Route
@@ -125,7 +131,7 @@ const AppRoutes = () => {
 
 const App = () => {
   return (
-    <Router future={{ v7_startTransition: true }}>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
         <SocketProvider>
           <NotificationProvider>

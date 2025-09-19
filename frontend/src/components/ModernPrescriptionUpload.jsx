@@ -58,10 +58,11 @@ const ModernPrescriptionUpload = () => {
     formData.append('prescription', file);
 
     try {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
       const response = await fetch('http://localhost:5005/api/prescriptions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer test-token`
+          'Authorization': `Bearer ${token}`
         },
         body: formData
       });

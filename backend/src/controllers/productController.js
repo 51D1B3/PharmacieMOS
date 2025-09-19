@@ -31,7 +31,7 @@ export const getProducts = asyncHandler(async (req, res) => {
         sortOrder = 'asc'
     } = req.query;
 
-    const query = { isActive: true };
+    const query = {};
 
     if (search) {
         query.$text = { $search: search };

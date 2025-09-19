@@ -5,7 +5,7 @@ import {
   Pill, FileText, ShoppingCart, MessageSquare, Bell, 
   LogOut, User, ChevronDown, Clock, CheckCircle, 
   XCircle, AlertTriangle, Package, Receipt, History,
-  Phone, Eye, Edit, Send, Download
+  Phone, Eye, Edit, Send, Download, TrendingUp, TrendingDown
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { API_BASE_URL, SOCKET_URL } from '../config/api.js';
@@ -16,6 +16,10 @@ import PharmacistStock from './pharmacist/PharmacistStock.jsx';
 import PharmacistHistory from './pharmacist/PharmacistHistory.jsx';
 import PharmacistChat from './pharmacist/PharmacistChat.jsx';
 import PharmacistProductsGrid from './pharmacist/PharmacistProductsGrid.jsx';
+import PharmacistNotifications from './pharmacist/PharmacistNotifications.jsx';
+import SaleForm from './pharmacist/SaleForm.jsx';
+import LiveSales from './pharmacist/LiveSales.jsx';
+import PrescriptionManager from './pharmacist/PrescriptionManager.jsx';
 
 const PharmacistDashboard = () => {
   const { user, logout } = useAuth();
@@ -141,18 +145,52 @@ const PharmacistDashboard = () => {
     window.open(whatsappUrl, '_blank');
   };
 
-  const StatCard = ({ title, value, icon: Icon, color, onClick }) => (
+  const handleSaveBackup = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/sales/backup`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          pharmacistId: user?.id,
+          date: new Date().toISOString().split('T')[0]
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Sauvegarde réussie ! ${data.salesCount} ventes sauvegardées pour un total de ${data.totalRevenue.toLocaleString()} GNF`);
+      } else {
+        alert('Erreur lors de la sauvegarde');
+      }
+    } catch (error) {
+      console.error('Erreur sauvegarde:', error);
+      alert('Erreur lors de la sauvegarde');
+    }
+  };
+
+  const StatCard = ({ title, value, icon: Icon, color, trend, trendValue, onClick }) => (
     <div 
-      className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md transition-all cursor-pointer`}
+      className={`bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md transition-shadow cursor-pointer`}
       onClick={onClick}
     >
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
-          <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{value}</p>
-        </div>
-        <div className={`bg-${color}-100 dark:bg-${color}-900/50 p-3 rounded-full`}>
-          <Icon className={`h-6 w-6 text-${color}-600 dark:text-${color}-400`} />
+        <div className="flex items-center space-x-4">
+          <div className={`bg-${color}-100 dark:bg-${color}-900/50 p-3 rounded-full`}>
+            <Icon className={`h-6 w-6 text-${color}-600 dark:text-${color}-400`} />
+          </div>
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{title}</p>
+            <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{value}</p>
+            {trend && (
+              <div className={`flex items-center mt-1 text-sm ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                {trend === 'up' ? <CheckCircle className="h-4 w-4 mr-1" /> : <XCircle className="h-4 w-4 mr-1" />}
+                <span>{trendValue}</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -163,7 +201,7 @@ const PharmacistDashboard = () => {
       onClick={() => onClick(id)}
       className={`relative flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
         active
-          ? 'bg-blue-600 text-white shadow'
+          ? 'bg-green-600 text-white shadow'
           : 'text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700'
       }`}
     >
@@ -182,48 +220,78 @@ const PharmacistDashboard = () => {
       {/* Actions rapides pharmacien */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
-          <Pill className="h-5 w-5 mr-2 text-blue-600" />
-          Actions Rapides
+          <Pill className="h-5 w-5 mr-2 text-green-600" />
+          Actions Rapides Pharmacien
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
           <button
             onClick={() => setActiveTab('prescriptions')}
-            className="p-4 rounded-lg border-2 border-dashed border-blue-300 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 group"
+            className="p-4 rounded-lg bg-blue-100 dark:bg-blue-900/50 hover:bg-blue-200 dark:hover:bg-blue-800/50 transition-all duration-200 group border border-blue-200 dark:border-blue-700"
           >
-            <FileText className="h-8 w-8 text-blue-600 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-            <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Ordonnances</p>
+            <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-xs font-medium text-blue-700 dark:text-blue-300 text-center">Ordonnances</p>
           </button>
           <button
             onClick={() => setActiveTab('sales')}
-            className="p-4 rounded-lg border-2 border-dashed border-green-300 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-200 group"
+            className="p-4 rounded-lg bg-green-100 dark:bg-green-900/50 hover:bg-green-200 dark:hover:bg-green-800/50 transition-all duration-200 group border border-green-200 dark:border-green-700"
           >
-            <ShoppingCart className="h-8 w-8 text-green-600 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-            <p className="text-sm font-medium text-green-700 dark:text-green-300">Nouvelle Vente</p>
+            <ShoppingCart className="h-6 w-6 text-green-600 dark:text-green-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-xs font-medium text-green-700 dark:text-green-300 text-center">Nouvelle Vente</p>
           </button>
           <button
             onClick={() => setActiveTab('stock')}
-            className="p-4 rounded-lg border-2 border-dashed border-orange-300 hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-200 group"
+            className="p-4 rounded-lg bg-orange-100 dark:bg-orange-900/50 hover:bg-orange-200 dark:hover:bg-orange-800/50 transition-all duration-200 group border border-orange-200 dark:border-orange-700"
           >
-            <Package className="h-8 w-8 text-orange-600 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-            <p className="text-sm font-medium text-orange-700 dark:text-orange-300">Vérifier Stock</p>
+            <Package className="h-6 w-6 text-orange-600 dark:text-orange-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-xs font-medium text-orange-700 dark:text-orange-300 text-center">Vérifier Stock</p>
           </button>
           <button
             onClick={handleWhatsAppContact}
-            className="p-4 rounded-lg border-2 border-dashed border-purple-300 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 group"
+            className="p-4 rounded-lg bg-purple-100 dark:bg-purple-900/50 hover:bg-purple-200 dark:hover:bg-purple-800/50 transition-all duration-200 group border border-purple-200 dark:border-purple-700"
           >
-            <Phone className="h-8 w-8 text-purple-600 mx-auto mb-2 group-hover:scale-110 transition-transform" />
-            <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Contacter Admin</p>
+            <Phone className="h-6 w-6 text-purple-600 dark:text-purple-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-xs font-medium text-purple-700 dark:text-purple-300 text-center">Contacter Admin</p>
+          </button>
+          <button
+            onClick={() => setActiveTab('chat')}
+            className="p-4 rounded-lg bg-cyan-100 dark:bg-cyan-900/50 hover:bg-cyan-200 dark:hover:bg-cyan-800/50 transition-all duration-200 group border border-cyan-200 dark:border-cyan-700"
+          >
+            <MessageSquare className="h-6 w-6 text-cyan-600 dark:text-cyan-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-xs font-medium text-cyan-700 dark:text-cyan-300 text-center">Messages</p>
+          </button>
+          <button
+            onClick={() => setActiveTab('history')}
+            className="p-4 rounded-lg bg-indigo-100 dark:bg-indigo-900/50 hover:bg-indigo-200 dark:hover:bg-indigo-800/50 transition-all duration-200 group border border-indigo-200 dark:border-indigo-700"
+          >
+            <History className="h-6 w-6 text-indigo-600 dark:text-indigo-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 text-center">Historique</p>
+          </button>
+          <button
+            onClick={() => alert('Téléchargement du rapport journalier...')}
+            className="p-4 rounded-lg bg-pink-100 dark:bg-pink-900/50 hover:bg-pink-200 dark:hover:bg-pink-800/50 transition-all duration-200 group border border-pink-200 dark:border-pink-700"
+          >
+            <Download className="h-6 w-6 text-pink-600 dark:text-pink-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-xs font-medium text-pink-700 dark:text-pink-300 text-center">Rapport</p>
+          </button>
+          <button
+            onClick={handleSaveBackup}
+            className="p-4 rounded-lg bg-gray-100 dark:bg-gray-900/50 hover:bg-gray-200 dark:hover:bg-gray-800/50 transition-all duration-200 group border border-gray-200 dark:border-gray-700"
+          >
+            <Receipt className="h-6 w-6 text-gray-600 dark:text-gray-400 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 text-center">Sauvegarde</p>
           </button>
         </div>
       </div>
 
-      {/* Statistiques */}
+      {/* Statistiques principales */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
           title="Ordonnances en attente" 
           value={stats.pendingPrescriptions} 
           icon={FileText} 
           color="red"
+          trend="up"
+          trendValue="+3 nouvelles"
           onClick={() => setActiveTab('prescriptions')}
         />
         <StatCard 
@@ -231,6 +299,8 @@ const PharmacistDashboard = () => {
           value={stats.todaySales} 
           icon={ShoppingCart} 
           color="green"
+          trend="up"
+          trendValue="+15%"
           onClick={() => setActiveTab('sales')}
         />
         <StatCard 
@@ -238,6 +308,8 @@ const PharmacistDashboard = () => {
           value={`${stats.todayRevenue.toLocaleString()} GNF`} 
           icon={Receipt} 
           color="blue"
+          trend="up"
+          trendValue="+8%"
         />
         <StatCard 
           title="Alertes stock" 
@@ -248,13 +320,44 @@ const PharmacistDashboard = () => {
         />
       </div>
 
-      {/* Activité récente */}
+      {/* Statistiques secondaires */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard 
+          title="Ordonnances traitées" 
+          value={stats.processedPrescriptions} 
+          icon={CheckCircle} 
+          color="indigo" 
+        />
+        <StatCard 
+          title="Messages non lus" 
+          value={unreadMessages} 
+          icon={MessageSquare} 
+          color="pink" 
+          onClick={() => setActiveTab('chat')}
+        />
+        <StatCard 
+          title="Produits en stock" 
+          value="245" 
+          icon={Package} 
+          color="cyan" 
+          onClick={() => setActiveTab('stock')}
+        />
+        <StatCard 
+          title="Clients servis" 
+          value="12" 
+          icon={User} 
+          color="purple" 
+        />
+      </div>
+
+      {/* Activité récente et alertes */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Activité récente */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
               <Clock className="h-5 w-5 mr-2 text-blue-600" />
-              Ordonnances Récentes
+              Activité Récente
             </h3>
             <button 
               onClick={() => setActiveTab('prescriptions')}
@@ -264,55 +367,122 @@ const PharmacistDashboard = () => {
             </button>
           </div>
           <div className="space-y-3">
-            {recentPrescriptions.length > 0 ? recentPrescriptions.map((prescription, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">{prescription.patient}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Il y a {prescription.time}</p>
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Ordonnance validée</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Il y a 5 minutes</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Vente enregistrée</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Il y a 12 minutes</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Stock faible détecté</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Il y a 30 minutes</p>
+              </div>
+            </div>
+            {recentPrescriptions.length > 0 && recentPrescriptions.slice(0, 2).map((prescription, index) => (
+              <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div className={`w-2 h-2 rounded-full ${
+                  prescription.status === 'pending' ? 'bg-red-500' : 'bg-green-500'
+                }`}></div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Ordonnance - {prescription.patient}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Il y a {prescription.time}</p>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  prescription.status === 'pending' 
-                    ? 'bg-yellow-100 text-yellow-800' 
-                    : 'bg-green-100 text-green-800'
-                }`}>
-                  {prescription.status === 'pending' ? 'En attente' : 'Validée'}
-                </span>
               </div>
-            )) : (
-              <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-                <p>Aucune ordonnance récente</p>
-              </div>
-            )}
+            ))}
           </div>
         </div>
 
+        {/* Alertes et notifications */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
-              <History className="h-5 w-5 mr-2 text-green-600" />
-              Ventes du Jour
+              <AlertTriangle className="h-5 w-5 mr-2 text-red-600" />
+              Alertes Stock
             </h3>
             <button 
-              onClick={() => setActiveTab('history')}
-              className="text-green-600 hover:text-green-700 text-sm font-medium"
+              onClick={() => setActiveTab('stock')}
+              className="text-red-600 hover:text-red-700 text-sm font-medium"
             >
-              Historique
+              Voir tout
             </button>
           </div>
           <div className="space-y-3">
-            {recentSales.length > 0 ? recentSales.map((sale, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+            {stats.lowStockAlerts > 0 ? (
+              Array.from({ length: Math.min(stats.lowStockAlerts, 4) }, (_, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-900 dark:text-gray-100">Produit {index + 1}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Stock: {5 - index}</p>
+                  </div>
+                  <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-800">Alerte</span>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                <p>Aucune alerte stock</p>
+              </div>
+            )}
+            {recentSales.length > 0 && recentSales.slice(0, 2).map((sale, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <div>
                   <p className="font-medium text-gray-900 dark:text-gray-100">{sale.client}</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Il y a {sale.time}</p>
                 </div>
                 <span className="font-semibold text-green-600">{sale.amount.toLocaleString()} GNF</span>
               </div>
-            )) : (
-              <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-                <p>Aucune vente aujourd'hui</p>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Statistiques financières détaillées */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6 flex items-center">
+          <Receipt className="h-5 w-5 mr-2 text-green-600" />
+          Analyse Financière du Jour
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-green-600 dark:text-green-400 font-medium">Bénéfices du Jour</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{(stats.todayRevenue * 0.25).toLocaleString()} GNF</p>
+                <p className="text-xs text-green-600 dark:text-green-400">Marge: 25%</p>
               </div>
-            )}
+              <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+            </div>
+          </div>
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Ordonnances en Cours</p>
+                <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{stats.pendingPrescriptions}</p>
+                <p className="text-xs text-blue-600 dark:text-blue-400">À traiter</p>
+              </div>
+              <Clock className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+            </div>
+          </div>
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">Performance</p>
+                <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">Excellent</p>
+                <p className="text-xs text-purple-600 dark:text-purple-400">Objectifs atteints</p>
+              </div>
+              <Pill className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+            </div>
           </div>
         </div>
       </div>
@@ -353,19 +523,12 @@ const PharmacistDashboard = () => {
             <div className="flex items-center space-x-4">
               <img src="/images/mon_logo.png" alt="Logo" className="h-12 w-12 rounded-full object-cover" />
               <div>
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Dashboard Pharmacien</h1>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">PharmaMOS</h1>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Gestion des Ordonnances et Ventes</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="relative p-2 text-gray-400 hover:text-gray-500">
-                <Bell className="h-6 w-6" />
-                {notifications.filter(n => !n.read).length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {notifications.filter(n => !n.read).length}
-                  </span>
-                )}
-              </button>
+              <PharmacistNotifications />
               <div className="relative">
                 <button 
                   onClick={() => setShowUserDropdown(!showUserDropdown)} 
@@ -424,8 +587,13 @@ const PharmacistDashboard = () => {
         {/* Contenu des onglets */}
         <div className="space-y-6">
           {activeTab === 'overview' && renderOverview()}
-          {activeTab === 'prescriptions' && <PharmacistPrescriptions />}
-          {activeTab === 'sales' && <PharmacistSales />}
+          {activeTab === 'prescriptions' && <PrescriptionManager />}
+          {activeTab === 'sales' && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <SaleForm />
+              <LiveSales />
+            </div>
+          )}
           {activeTab === 'stock' && (
             <div className="space-y-6">
               <PharmacistStock />

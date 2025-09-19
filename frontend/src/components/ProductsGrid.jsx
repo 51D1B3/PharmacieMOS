@@ -63,8 +63,10 @@ const ProductsGrid = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const response = await apiService.getProducts({ limit: 50 });
-      const fetchedProducts = response?.data && Array.isArray(response.data) ? response.data : [];
+      const response = await apiService.getProducts();
+      // L'API retourne directement un tableau de produits
+      const fetchedProducts = Array.isArray(response) ? response : (response?.data && Array.isArray(response.data) ? response.data : []);
+      console.log('Produits chargés:', fetchedProducts.length);
       setAllProducts(fetchedProducts);
       setProducts(fetchedProducts);
     } catch (error) {
@@ -272,33 +274,29 @@ const ProductsGrid = () => {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => {
+        {Array.isArray(products) && products.map((product) => {
           const stockOnHand = product.stock?.onHand || 0;
           const isLowStock = stockOnHand <= (product.stock?.thresholdAlert || 5) && stockOnHand > 0;
           const isOutOfStock = stockOnHand === 0;
           const finalPrice = product.discountedPrice ?? product.priceTTC ?? product.prix;
           const originalPrice = product.priceTTC ?? product.prix;
           const hasDiscount = product.hasActiveDiscount && finalPrice < originalPrice;
+          const imageUrl = product.image || `https://via.placeholder.com/400x400/f3f4f6/9ca3af?text=${encodeURIComponent(product.name || product.nom || 'Produit')}`;
 
           return (
             <div key={product._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-all duration-300 group">
               {/* Image du produit */}
               <div className="relative h-48 bg-gray-100 dark:bg-gray-900 overflow-hidden">
-                {product.image ? (
-                  <img
-                    src={getProductImageUrl(product.image, product.name || product.nom)}
-                    alt={product.name || product.nom}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = `https://via.placeholder.com/400x400/e5e7eb/6b7280?text=${encodeURIComponent((product.name || product.nom || 'Produit').substring(0, 10))}`;
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Package className="h-12 w-12 text-gray-400 dark:text-gray-600" />
-                  </div>
-                )}
+                <img
+                  src={imageUrl}
+                  alt={product.name || product.nom}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = `https://via.placeholder.com/400x400/f3f4f6/9ca3af?text=${encodeURIComponent((product.name || product.nom || 'Produit').substring(0, 15))}`;
+                  }}
+
+                />
                 
                 {/* Badges */}
                 <div className="absolute top-2 left-2 flex flex-col gap-2">
@@ -414,7 +412,7 @@ const ProductsGrid = () => {
       </div>
 
       {/* Message si aucun produit */}
-      {products.length === 0 && (
+      {(!products || products.length === 0) && (
         <div className="text-center py-12 bg-white dark:bg-gray-900 rounded-xl">
           <Package className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Aucun produit disponible</h3>

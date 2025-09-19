@@ -27,7 +27,7 @@ const PharmacistProductsGrid = () => {
   };
 
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return null;
+    if (!imagePath) return `https://via.placeholder.com/200x200/e5e7eb/6b7280?text=Produit`;
     if (imagePath.startsWith('http')) return imagePath;
     return imagePath.startsWith('/') ? `${API_BASE_URL}${imagePath}` : `${API_BASE_URL}/uploads/products/${imagePath}`;
   };
@@ -46,29 +46,24 @@ const PharmacistProductsGrid = () => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
       <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
-        Catalogue Produits ({products.length})
+        Catalogue Produits ({products?.length || 0})
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {products.map((product) => {
+        {Array.isArray(products) && products.map((product) => {
           const stockStatus = getStockStatus(product);
           return (
             <div key={product._id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
               <div className="relative h-32 bg-gray-100 dark:bg-gray-600 rounded-lg mb-3 overflow-hidden">
-                {product.image ? (
-                  <img
-                    src={getImageUrl(product.image)}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                <div className="w-full h-full flex items-center justify-center" style={{display: product.image ? 'none' : 'flex'}}>
-                  <Package className="h-8 w-8 text-gray-400" />
-                </div>
+                <img
+                  src={getImageUrl(product.image || product.images?.[0])}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = `https://via.placeholder.com/200x200/e5e7eb/6b7280?text=${encodeURIComponent((product.name || 'Produit').substring(0, 8))}`;
+                  }}
+                />
                 
                 {stockStatus.status !== 'ok' && (
                   <div className={`absolute top-2 left-2 bg-${stockStatus.color}-500 text-white text-xs px-2 py-1 rounded-full`}>

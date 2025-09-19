@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '../config/api.js';
+
 /**
  * Utilitaire pour gérer les URLs d'images des produits
  * Supporte les images Cloudinary et les images locales
@@ -10,9 +12,9 @@
  * @returns {string} URL complète de l'image
  */
 export const getProductImageUrl = (imageUrl, fallbackText = 'Produit') => {
-  // Si pas d'image ou image par défaut
-  if (!imageUrl || imageUrl === '/uploads/products/default.png') {
-    return `https://via.placeholder.com/400x400.png/f3f4f6/9ca3af?text=${encodeURIComponent(fallbackText)}`;
+  // Si pas d'image
+  if (!imageUrl) {
+    return `https://via.placeholder.com/400x400/f3f4f6/9ca3af?text=${encodeURIComponent(fallbackText)}`;
   }
   
   // Si l'image est déjà une URL complète (Cloudinary ou autre)
@@ -20,13 +22,8 @@ export const getProductImageUrl = (imageUrl, fallbackText = 'Produit') => {
     return imageUrl;
   }
   
-  // Si c'est juste un nom de fichier, construire l'URL Cloudinary ou locale
-  if (!imageUrl.startsWith('/')) {
-    return `http://localhost:5005/uploads/products/${imageUrl}`;
-  }
-  
-  // Si c'est une image locale avec chemin complet
-  return `http://localhost:5005${imageUrl}`;
+  // Fallback pour les autres cas
+  return `https://via.placeholder.com/400x400/f3f4f6/9ca3af?text=${encodeURIComponent(fallbackText)}`;
 };
 
 /**

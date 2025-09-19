@@ -1,8 +1,15 @@
 import express from 'express';
-const router = express.Router();
-import { createNotification } from '../controllers/notificationController.js';
+import { auth } from '../middleware/auth.js';
 
-// Route pour créer une notification
-router.post('/', createNotification);
+const router = express.Router();
+
+// GET /api/notifications
+router.get('/', auth, async (req, res) => {
+  try {
+    res.json([]);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
 
 export default router;

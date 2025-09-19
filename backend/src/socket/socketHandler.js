@@ -20,10 +20,17 @@ export default function socketHandler(socketIO) {
     // Rejoindre une room selon le rôle
     socket.on('join-room', (data) => {
       const { userId, role } = data;
-      socket.join(role); // 'admin' ou 'client'
+      socket.join(role); // 'admin', 'client', 'pharmacist'
       socket.userId = userId;
       socket.userRole = role;
       console.log(`👤 User ${userId} rejoint la room ${role}`);
+    });
+
+    // Gérer les notifications de support
+    socket.on('support-notification', (notification) => {
+      console.log('📧 Notification de support reçue:', notification);
+      // Envoyer la notification au pharmacien
+      socket.to('pharmacist').emit('support-notification', notification);
     });
 
     socket.on('disconnect', () => {

@@ -38,7 +38,7 @@ const AdminProductsGrid = () => {
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          Produits ({products.length})
+          Produits ({products?.length || 0})
         </h3>
         <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
           <Plus className="h-4 w-4" />
@@ -47,7 +47,7 @@ const AdminProductsGrid = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {products.map((product) => (
+        {Array.isArray(products) && products.map((product) => (
           <div key={product._id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
             <div className="relative h-32 bg-gray-100 dark:bg-gray-600 rounded-lg mb-3 overflow-hidden">
               {product.image ? (

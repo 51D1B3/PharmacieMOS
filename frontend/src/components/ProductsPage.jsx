@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-  ShoppingCart, Package, Heart, Eye, Filter, SortAsc, Search, X, Star, ChevronDown
+  Package, Filter, SortAsc, Search, X, ChevronDown
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { useCart } from '../contexts/CartContext.jsx';
@@ -15,7 +15,6 @@ const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favorites, setFavorites] = useState([]);
   const [searchFilters, setSearchFilters] = useState({
     category: '',
     priceRange: '',
@@ -26,7 +25,6 @@ const ProductsPage = () => {
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const API_URL = process.env.REACT_APP_API_URL;
   const searchTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -41,7 +39,7 @@ const ProductsPage = () => {
         apiService.getCategories()
       ]);
 
-      const fetchedProducts = productsData?.data && Array.isArray(productsData.data) ? productsData.data : [];
+      const fetchedProducts = productsData && Array.isArray(productsData.data) ? productsData.data : [];
       setProducts(fetchedProducts);
       setCategories(categoriesData || []);
     } catch (error) {
@@ -80,22 +78,6 @@ const ProductsPage = () => {
     searchTimeoutRef.current = setTimeout(() => {
       handleSearch(query);
     }, 300);
-  };
-
-
-  const toggleFavorite = (product) => {
-    setFavorites(prev => {
-      const isFavorite = prev.some(fav => fav._id === product._id);
-      if (isFavorite) {
-        return prev.filter(fav => fav._id !== product._id);
-      } else {
-        return [...prev, product];
-      }
-    });
-  };
-
-  const isFavorite = (productId) => {
-    return favorites.some(fav => fav._id === productId);
   };
 
   const sortProducts = (productsToSort) => {
@@ -304,78 +286,11 @@ const ProductsPage = () => {
         {/* Grille de produits */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {sortedProducts.map((product) => (
-            <div key={product._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-              {/* Image du produit */}
-              <div className="relative h-48 bg-gray-100">
-                {product.image ? (
-                  <img
-                    src={`${process.env.REACT_APP_API_URL}${product.image}`}
-                    alt={product.nom || product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = `https://via.placeholder.com/400x400.png/f3f4f6/9ca3af?text=${encodeURIComponent(product.nom || product.name || 'Produit')}`;
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Package className="h-12 w-12 text-gray-400" />
-                  </div>
-                )}
-                
-                {/* Badge de stock */}
-                {product.stock <= 0 && (
-                  <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
-                    Rupture
-                  </div>
-                )}
-                
-                {/* Bouton favoris */}
-                <button
-                  onClick={() => toggleFavorite(product)}
-                  className={`absolute top-2 right-2 p-2 rounded-full transition-colors ${
-                    isFavorite(product._id)
-                      ? 'bg-red-500 text-white'
-                      : 'bg-white text-gray-400 hover:text-red-500'
-                  }`}
-                >
-                  <Heart className={`h-4 w-4 ${isFavorite(product._id) ? 'fill-current' : ''}`} />
-                </button>
-              </div>
-
-              {/* Contenu */}
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{product.nom || product.name}</h3>
-                <p className="text-sm text-gray-600 mb-2">{product.categorie || product.category}</p>
-                
-                {/* Prix */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-lg font-bold text-primary-600">
-                    {(product.prix || product.price || 0).toLocaleString()} GNF
-                  </span>
-                  {product.discount > 0 && (
-                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">
-                      -{product.discount}%
-                    </span>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => addToCart(product)}
-                    disabled={product.stock <= 0}
-                    className="flex-1 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 text-white px-3 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-1"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    <span>Ajouter</span>
-                  </button>
-                  
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Eye className="h-4 w-4 text-gray-600" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ProductCard 
+              key={product._id} 
+              product={product} 
+              onAddToCart={() => addToCart(product)} 
+            />
           ))}
         </div>
 

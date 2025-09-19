@@ -12,10 +12,11 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
-    "seed": "node src/scripts/seed.js",
+    "seed": "node scripts/seedProducts.js",
     "migrate": "node src/scripts/migrate.js",
     "migrate:images": "node scripts/migrateImages.js",
-    "create-admin": "node scripts/createAdmin.js"
+    "create-admin": "node scripts/createAdmin.js",
+    "delete:products": "node scripts/deleteProducts.js"
   },
   "keywords": [
     "pharmacy",

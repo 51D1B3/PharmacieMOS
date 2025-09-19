@@ -54,16 +54,6 @@ const LandingPage = () => {
       description: "Produits pharmaceutiques certifiés et contrôlés"
     },
     {
-      url: "https://i.postimg.cc/05GLj4MC/Best-Pharmacy-Landing.jpg",
-      title: "Experts pharmaciens",
-      description: "Conseils professionnels de pharmaciens qualifiés"
-    },
-    {
-      url: "https://i.postimg.cc/c15fRxn1/pngtree-pharmacy-Landing.png",
-      title: "Medicaments",
-      description: "Conseils professionnels de pharmaciens"
-    },
-    {
       url: "https://i.postimg.cc/Bn5gBW3h/Smiling-pharmacist-Landing.jpg",
       title: "Pharmacien moderne",
       description: "Conseils d'un harmaciens qualifiés"
@@ -464,12 +454,17 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             {/* Logo et Description */}
             <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="bg-primary-600 p-2 rounded-lg">
-                  <Heart className="h-6 w-6 text-white" />
-                </div>
+              <button 
+                onClick={() => window.location.reload()}
+                className="flex items-center space-x-3 mb-4 hover:opacity-80 transition-opacity"
+              >
+                <img
+                  src="/images/mon_logo.png"
+                  alt="PharmaMOS Logo"
+                  className="h-10 w-10 rounded-full object-cover border-2 border-primary-500"
+                />
                 <span className="text-2xl font-bold">PharmaMOS</span>
-              </div>
+              </button>
               <p className="text-gray-300 mb-6 leading-relaxed">
                 PharmaMOS révolutionne la gestion pharmaceutique avec une plateforme moderne, 
                 sécurisée et accessible 24h/7j. Votre santé, notre priorité.
@@ -508,15 +503,15 @@ const LandingPage = () => {
               <div className="space-y-3 text-gray-300">
                 <div className="flex items-center space-x-3">
                   <Phone className="h-4 w-4" />
-                  <span>+224 123 456 789</span>
+                  <span>+224 623 841 149</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail className="h-4 w-4" />
-                  <span>contact@pharmacos.gn</span>
+                  <span>mahamadsidiboss@gmail.com</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <MapPin className="h-4 w-4" />
-                  <span>Conakry, Guinée</span>
+                  <span>Madina, Conakry, Guinée</span>
                 </div>
               </div>
             </div>
@@ -537,13 +532,13 @@ const LandingPage = () => {
           <div className="border-t border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="text-gray-400 mb-4 md:mb-0">
-                <p>&copy; 2024 PharmaMOS. Tous droits réservés.</p>
+                <p>&copy; 2025 PharmaMOS. Tous droits réservés.</p>
                 <p className="text-sm">Développé avec ❤️ pour la santé en Guinée</p>
               </div>
               <div className="flex space-x-6 text-sm text-gray-400">
-                <a href="#" className="hover:text-white transition-colors">Politique de confidentialité</a>
-                <a href="#" className="hover:text-white transition-colors">Conditions d'utilisation</a>
-                <a href="#" className="hover:text-white transition-colors">Support</a>
+                <Link to="/privacy-policy" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors">Politique de confidentialité</Link>
+                <Link to="/terms-of-service" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors">Conditions d'utilisation</Link>
+                <Link to="/support" onClick={() => window.scrollTo(0, 0)} className="hover:text-white transition-colors">Support</Link>
               </div>
             </div>
           </div>

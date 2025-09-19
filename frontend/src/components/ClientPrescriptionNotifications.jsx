@@ -15,17 +15,22 @@ const ClientPrescriptionNotifications = () => {
     newSocket.emit('join-room', { userId: 'client', role: 'client' });
 
     // Écouter les validations de prescriptions
-    newSocket.on('prescription-validated', (data) => {
-      console.log('🔔 Prescription validée reçue:', data);
+    newSocket.on('prescription-validated', (prescription) => {
+      console.log('🔔 Prescription validée reçue:', prescription);
+      
+      const medicationsList = prescription.medications?.map(med => 
+        `${med.name} (x${med.quantity})`
+      ).join(', ') || 'Aucun médicament';
       
       const notification = {
         id: Date.now(),
         type: 'prescription-validated',
         title: 'Ordonnance validée',
-        message: data.message,
-        description: data.description,
+        message: `Votre ordonnance a été validée par le pharmacien`,
+        description: `Médicaments prescrits: ${medicationsList}. Total: ${prescription.totalAmount?.toLocaleString()} GNF`,
         timestamp: new Date(),
-        read: false
+        read: false,
+        prescription: prescription
       };
       
       setNotifications(prev => [notification, ...prev]);
@@ -33,7 +38,7 @@ const ClientPrescriptionNotifications = () => {
       // Notification navigateur
       if (Notification.permission === 'granted') {
         new Notification('Ordonnance validée', {
-          body: data.message,
+          body: `Médicaments: ${medicationsList}`,
           icon: '/favicon.ico'
         });
       }

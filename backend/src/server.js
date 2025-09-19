@@ -19,6 +19,7 @@ import rateLimit from 'express-rate-limit';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cookieParser from 'cookie-parser';
+import socketHandler from './socket/socketHandler.js';
 
 import connectDB from './config/database.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
@@ -26,8 +27,13 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 // Routes simples
 import authRoutes from './routes/auth-simple.js';
 import productRoutes from './routes/products-simple.js';
+import productsApiRoutes from './routes/products.js';
 import pharmacistStatsRoutes from './routes/pharmacist-stats.js';
 import chatRoutes from './routes/chat.js';
+import notificationRoutes from './routes/notifications.js';
+import prescriptionRoutes from './routes/prescriptions.js';
+import personnelRoutes from './routes/personnel.js';
+import salesRoutes from './routes/sales.js';
 
 const app = express();
 const server = createServer(app);
@@ -86,9 +92,16 @@ app.get('/health', (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
+app.use('/api/products', productsApiRoutes);
 app.use('/api/pharmacist', pharmacistStatsRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/personnel', personnelRoutes);
+app.use('/api/sales', salesRoutes);
+
+// Initialiser Socket.IO
+socketHandler(io);
 
 // Rendre io accessible dans les routes
 app.set('io', io);
